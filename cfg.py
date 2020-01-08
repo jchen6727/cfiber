@@ -34,4 +34,6 @@ cfg.analysis.plotTraces = Dict({'include': ['cfiber'], 'overlay': True, 'oneFigP
                              'showFig': False, 'timeRange': [0,cfg.duration]})
 
 # Parameters
-
+cfg.gnaT = 0.04
+#cfg.gnabar17, cfg.gnabar18, cfg.gnabar19 = cfg.gnaT/6, cfg.gnaT/2, cfg.gnaT/3
+cfg.gnabar17, cfg.gnabar18, cfg.gnabar19 = cfg.gnaT, 0, 0
