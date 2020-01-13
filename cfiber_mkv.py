@@ -16,12 +16,13 @@ class cfiber():
         #gnabar17 = 1/6, gnabar18 = 3/6, gnabar19 = 2/6
         #gnabar19 does not carry role in action potential propagation
     def __init__(self,x=0,y=0,z=0,ID=0, gnabar17=0.04/6, gnabar18=0.12/6, gnabar19=0.08/6):
-        self.regions = {'axn': [], 'drg': [], 'soma': []}
+        self.regions = {'all': [], 'axn': [], 'drg': [], 'soma': []}
         self.gnabar17, self.gnabar18, self.gnabar19 = gnabar17, gnabar18, gnabar19
         self.set_morphology()
         self.insert_conductances()
         
         self.connect_secs()
+        self.initialize_values()
 
     def add_comp(self, sec, *regions):
         self.__dict__[sec] = h.Section(name=sec)
@@ -31,11 +32,11 @@ class cfiber():
     def set_morphology(self):
 
         for sec in ['axnperi', 'axncntr', 'drgperi', 'drgcntr', 'drgstem']:
-            self.add_comp(sec, sec[0:3])
+            self.add_comp(sec, sec[0:3], 'all')
             self.set_geom(sec)
 
         for sec in ['drgsoma']:
-            self.add_comp(sec, 'drg', 'soma')
+            self.add_comp(sec, 'drg', 'soma', 'all')
             self.set_geom(sec)
 
     def set_geom(self, sec):
@@ -61,11 +62,11 @@ class cfiber():
             
             sec.insert('pas')
             sec.g_pas = 1/10000
-            sec.e_pas = -60
+            ##sec.e_pas = -60
             
         for sec in self.regions['drg']:
             
-            sec.e_pas = -54
+            ##sec.e_pas = -54
             
             sec.insert('iM')
             sec.gkbar_iM = 0.0004
@@ -83,6 +84,18 @@ class cfiber():
         self.drgsoma.connect(self.drgstem)
         self.drgcntr.connect(self.drgperi)
         self.axncntr.connect(self.drgcntr)
+
+    def initialize_values(self):
+        #sets passive current to allow for steady state voltage.
+        for sec in self.regions['all']:
+            h.finitialize(-60)
+            h.fcurrent()
+            sec.e_pas = sec.v + (sec.ina + sec.ik) / sec.g_pas
+
+
+
+
+
 
 '''      
 'axnperi'
