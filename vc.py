@@ -90,7 +90,12 @@ def fit( strt, stop, t, gna):
     values = {'minf': popt[0], 'mtau': popt[1], 'hinf':popt[2], 'htau':popt[3], 'pcov':pcov}
     return values
 
-#def getHH()
+#def getHH(v = 0):
+#   actually just use:
+#   h.rates_hh(v)
+#   h.tau_hh, h.hinf_hh, h.mtau_hh, h.minf_hh
+#
+#use rates here to get mtau stuff
 if __name__ == "__main__":
     print("simData = vc(chan, record, vstart, vsteps, vstop, dur)")
     print("simData.keys()")
