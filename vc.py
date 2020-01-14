@@ -1,10 +1,15 @@
 from neuron import h
 import matplotlib.pyplot as plt
+import numpy as np
+from scipy.optimize import curve_fit
 
 h.load_file("stdrun.hoc")
 
-
-def vc(chan = "hh", record = "m", vstart = 0, vsteps = range(-50, 50, 10), vstop = 0, dur = [25,25,25]):
+#take m0 as 0 and t0 as 1
+def func( t , minf, mtau, hinf, htau):
+    return ( minf - minf*np.exp(-t/mtau) )**3 * ( hinf + (1 - hinf)*np.exp(-t/htau) )
+    
+def vc(chan = "hh", record = "gna", vstart = -90, vsteps = range(-50, 50, 10), vstop = 0, dur = [25,25,25], gna_normalize = True):
     varstr = record + "_" + chan
     simData = {'sim':varstr, 'vstart':vstart, 'vsteps':vsteps, 'vstop': vstop, 'dur': dur, 'dt': h.dt}
     h.tstop = dur[0]+dur[1]+dur[2]
@@ -32,18 +37,26 @@ def vc(chan = "hh", record = "m", vstart = 0, vsteps = range(-50, 50, 10), vstop
             exec(exestr)
         rvs.append(rv)
 
-    t = h.Vector()
-    t.record(h._ref_t)
+    if gna_normalize:
+        if chan == "hh":
+            sec.gnabar_hh = 1
+        else: 
+            exestr = "sec.gbar_" + chan + " = 1"
+            exec(exestr)
+
+
+    t = [x * h.dt for x in range( int(h.tstop/h.dt) + 1 )]
+    #t = h.Vector()
+    #t.record(h._ref_t)
 
     h.t = 0
     h.finitialize(vstart)
     h.fcurrent()
     h.run()
 
-    #slice off initialization
-    t  = [t_ for t_ in t if t_ > dur[0] * 0.7]
+    #t  = [t_ for t_ in t]
     for i, rv in enumerate(rvs):
-        rv = [rv_ for rv_ in rv][-len(t):]
+        rv = [rv_ for rv_ in rv]
         rvs[i] = rv
 
     fig, ax = plt.subplots()
@@ -51,7 +64,7 @@ def vc(chan = "hh", record = "m", vstart = 0, vsteps = range(-50, 50, 10), vstop
 
     ax.set_ylabel(record)
 
-    ax.set_title( varstr + "_vclamp")
+    ax.set_title( varstr + "_vclamp_" + str(vstart) + "__E--" + str(vstop))
     
     simData['t'] = t
     for i, vstep in enumerate(vsteps):
@@ -63,6 +76,22 @@ def vc(chan = "hh", record = "m", vstart = 0, vsteps = range(-50, 50, 10), vstop
 
     return simData
 
+def fit( window, t, gna):
+    #istrt = int(window[0]/h.dt)
+    #istop = int(window[1]/h.dt)
+    #add 1 to istrt to get the actual "start" stimulus
+    #or else wierd things happen to the curve
+
+    #just use indexing values for now so can manually adjust window size
+    istrt = window[0]
+    istop = window[1]
+    t   = t  [istrt:istop]
+    gna = gna[istrt:istop]
+    popt, pcov = curve_fit(func, t, gna, bounds = (0, [1,np.inf,1,np.inf]))
+    values = {'minf': popt[0], 'mtau': popt[1], 'hinf':popt[2], 'htau':popt[3]}
+    return values, pcov
+
+#def getHH()
 if __name__ == "__main__":
     print("simData = vc(chan, record, vstart, vsteps, vstop, dur)")
     print("simData.keys()")
