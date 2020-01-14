@@ -76,20 +76,19 @@ def vc(chan = "hh", record = "gna", vstart = -90, vsteps = range(-50, 50, 10), v
 
     return simData
 
-def fit( window, t, gna):
+def fit( strt, stop, t, gna):
     #istrt = int(window[0]/h.dt)
     #istop = int(window[1]/h.dt)
     #add 1 to istrt to get the actual "start" stimulus
     #or else wierd things happen to the curve
 
     #just use indexing values for now so can manually adjust window size
-    istrt = window[0]
-    istop = window[1]
-    t   = t  [istrt:istop]
-    gna = gna[istrt:istop]
+    gna = gna[strt:stop]
+    #reset window for t to represent new 0
+    t   = t  [:len(gna)]
     popt, pcov = curve_fit(func, t, gna, bounds = (0, [1,np.inf,1,np.inf]))
-    values = {'minf': popt[0], 'mtau': popt[1], 'hinf':popt[2], 'htau':popt[3]}
-    return values, pcov
+    values = {'minf': popt[0], 'mtau': popt[1], 'hinf':popt[2], 'htau':popt[3], 'pcov':pcov}
+    return values
 
 #def getHH()
 if __name__ == "__main__":
