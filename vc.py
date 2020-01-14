@@ -23,7 +23,13 @@ def vc(chan = "hh", record = "gna", vstart = -90, vsteps = range(-50, 50, 10), v
         sec = h.Section()
         sec.insert(chan)
         secs.append(sec)
-
+        
+        if gna_normalize:
+            if chan == "hh":
+                sec.gnabar_hh = 1
+            else: 
+                exestr = "sec.gbar_" + chan + " = 1"
+                exec(exestr)
         vc = h.VClamp(sec(0.5))
         vc.dur[0], vc.dur[1], vc.dur[2] = dur[0], dur[1], dur[2]
         vc.amp[0], vc.amp[1], vc.amp[2] = vstart, vstep, vstop
@@ -36,13 +42,6 @@ def vc(chan = "hh", record = "gna", vstart = -90, vsteps = range(-50, 50, 10), v
             exestr = "rv.record(sec(0.5)._ref_" + varstr + ")"
             exec(exestr)
         rvs.append(rv)
-
-    if gna_normalize:
-        if chan == "hh":
-            sec.gnabar_hh = 1
-        else: 
-            exestr = "sec.gbar_" + chan + " = 1"
-            exec(exestr)
 
 
     t = [x * h.dt for x in range( int(h.tstop/h.dt) + 1 )]
@@ -87,10 +86,11 @@ def fit( strt, stop, t, gna):
     #reset window for t to represent new 0
     t   = t  [:len(gna)]
     popt, pcov = curve_fit(func, t, gna, bounds = (0, [1,np.inf,1,np.inf]))
-    values = {'minf': popt[0], 'mtau': popt[1], 'hinf':popt[2], 'htau':popt[3], 'pcov':pcov}
-    return values
+    return {'minf': popt[0], 'mtau': popt[1], 'hinf':popt[2], 'htau':popt[3], 'pcov':pcov}
 
-#def getHH(v = 0):
+def getHH(v = 0):
+    h.rates_hh(v)
+    return {'minf': h.minf_hh, 'mtau': h.mtau_hh, 'hinf': h.hinf_hh, 'htau': h.htau_hh}
 #   actually just use:
 #   h.rates_hh(v)
 #   h.tau_hh, h.hinf_hh, h.mtau_hh, h.minf_hh
