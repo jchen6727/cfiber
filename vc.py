@@ -6,8 +6,14 @@ from scipy.optimize import curve_fit
 h.load_file("stdrun.hoc")
 
 #take m0 as 0 and t0 as 1
+
 def func( t , minf, mtau, hinf, htau):
-    return ( minf - minf*np.exp(-t/mtau) )**3 * ( hinf + (1 - hinf)*np.exp(-t/htau) )
+    m = minf - minf*np.exp(-t/mtau)
+    h = hinf + (1 - hinf)*np.exp(-t/htau)
+    return m*m*m*h
+    
+def func0( t , m0, minf, mtau, h0, hinf, htau):
+    return minf - ( (m0 - minf) *np.exp(-t/mtau) )**3 * ( hinf + (h0 - hinf)*np.exp(-t/htau) ) 
     
 def vc(chan = "hh", record = "gna", vstart = -90, vsteps = range(-50, 50, 10), vstop = 0, dur = [25,25,25], gna_normalize = True):
     varstr = record + "_" + chan
@@ -17,8 +23,6 @@ def vc(chan = "hh", record = "gna", vstart = -90, vsteps = range(-50, 50, 10), v
     vcs  = [] #voltage clamps
     rvs  = [] #record  vectors
     
-
-
     for vstep in vsteps:
         sec = h.Section()
         sec.insert(chan)
@@ -85,7 +89,7 @@ def fit( strt, stop, t, gna):
     gna = gna[strt:stop]
     #reset window for t to represent new 0
     t   = t  [:len(gna)]
-    popt, pcov = curve_fit(func, t, gna, bounds = (0, [1,np.inf,1,np.inf]))
+    popt, pcov = curve_fit(func, t, gna, bounds = (0, [1 , np.inf, 1 , np.inf]))
     return {'minf': popt[0], 'mtau': popt[1], 'hinf':popt[2], 'htau':popt[3], 'pcov':pcov}
 
 def getHH(v = 0):
