@@ -130,7 +130,7 @@ def fit_bz( v, inf, bounds = [ [-100, 0], [100, np.inf]] ):
     popt, pcov = curve_fit(fx_bz, v, inf, bounds = bounds)
     return {'v2m': popt[0], 'sm': popt[1]}, pcov
 
-def fit_ab( v, inf, bounds = [ []])
+#def fit_ab( v, inf):
 
 # def fx_ab( v , a0, b0, delta, s):
 #     A = a0*np.exp(    -delta*v /s  )
