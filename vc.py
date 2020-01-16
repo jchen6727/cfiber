@@ -15,17 +15,19 @@ def fx_hh( t , minf, mtau, hinf, htau):
     h = hinf + (1 - hinf)*np.exp(-t/htau)
     return m*m*m*h
 
-def fx_ab( v ):
+def fx_ab( v , a0, b0, delta, s):
 # calculate values to determine the A(v), B(v) values to fit
 # (A(v) B(v) being forward and backward rate functions of v)
-# problematic note, many different possible functions can be 
+# NB, many different possible functions can be 
 # used here
+    A = a0*np.exp(    -delta*v /s  )
+    B = b0*np.exp(  (1-delta)*v/s  )
 
-# just a placeholder until decide what we want
-    return 1
+    return A / (A + B)
 
 
 def fx_bz( v , v2m, sm):
+# Boltzmann function which can be taken from ab
     f = ( v - v2m ) / sm
     return 1 / (1 + np.exp(f))
 
@@ -128,14 +130,21 @@ def fit_bz( v, inf, bounds = [ [-100, 0], [100, np.inf]] ):
     popt, pcov = curve_fit(fx_bz, v, inf, bounds = bounds)
     return {'v2m': popt[0], 'sm': popt[1]}, pcov
 
+def fit_ab( v, inf, bounds = [ []])
+
+# def fx_ab( v , a0, b0, delta, s):
+#     A = a0*np.exp(    -delta*v /s  )
+#     B = b0*np.exp(  (1-delta)*v/s  )
+#     return A / (A + B)
+
+
 def get_hh(v = 0):
     h.rates_hh(v)
     return {'minf': h.minf_hh, 'mtau': h.mtau_hh, 'hinf': h.hinf_hh, 'htau': h.htau_hh}
 
-def run_hh( strt, stop):
-    vsteps = range(20,-90,-5)
+def run_hh( strt, stop , chan = 'na19a', record = 'g', vstart = -150, vsteps = range(50,- 75, -5), vstop = -150, dur = [150,150,150]):
     # run voltage high to low
-    simData = vc(vsteps=vsteps)
+    simData = vc(chan = chan, record = record, vstart = vstart, vsteps=vsteps, vstop = vstop, dur = dur)
 
     # initialize dictionary to store values
     # reverse how we feed the voltages to
@@ -189,13 +198,12 @@ def run_hh( strt, stop):
 
     m, cov = fit_bz( vs , minfs, bounds = [ [-100, -np.inf], [100, 0]])
     h, cov = fit_bz( vs , hinfs, bounds = [ [-100,  0], [100, np.inf]])
-    
+
+    # we can fit the equations for A and B.    
     fitdata['minf_bz'] = [fx_bz(v, m['v2m'], m['sm']) for v in fitdata['v']]
     fitdata['hinf_bz'] = [fx_bz(v, h['v2m'], h['sm']) for v in fitdata['v']]
 
     return fitdata, hhdata
-
-
 
 def plotData( record, vv, fitdata, hhdata ):
 
@@ -212,10 +220,6 @@ def plotData( record, vv, fitdata, hhdata ):
     ax.legend(fontsize=8)
     plt.savefig("hh_" + record + "_vclamp.png")
     plt.close()
-
-    
-
-
 
 if __name__ == "__main__":
     print("simData = vc(chan, record, vstart, vsteps, vstop, dur)")
