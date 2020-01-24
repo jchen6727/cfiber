@@ -29,7 +29,7 @@ vc_mkv_vars = [
     ]
 
 # specific voltage clamp for markov models
-def vc(chan = "na17a", vstart = -150, vsteps = range(-90,90,5), vstop = -150, dur = [5,5,5], dt = 0.025, vars = vc_mkv_vars):
+def vc(chan = "na17a", vstart = -150, vstep = 0, vstop = -150, dur = [5,5,5], skip = [True, False, True], dt = 0.025, vars = vc_mkv_vars):
     simdata = {'chan': chan, 'vars': vars, 'vstart':vstart, 'vsteps':vsteps, 'vstop': vstop, 'dur': dur, 'dt': dt}
     h.dt = dt
     h.steps_per_ms = 1/h.dt
@@ -43,26 +43,24 @@ def vc(chan = "na17a", vstart = -150, vsteps = range(-90,90,5), vstop = -150, du
     vcs  = [] #voltage clamps
     rvs  = {} #record  vectors
     
-    for vstep in vsteps:
-        sec = h.Section()
-        sec.insert(chan)
-        secs.append(sec)
+
+    sec = h.Section()
+    sec.insert(chan)
+    secs.append(sec)
 
 # normalize gna -> gnabar = 1
-        exestr = "sec.gnabar_%s = 1" %(chan)
+    exestr = "sec.gnabar_%s = 1" %(chan)
+    exec(exestr)
+    vc = h.VClamp(sec(0.5))
+    vc.dur[0], vc.dur[1], vc.dur[2] = dur[0], dur[1], dur[2]
+    vc.amp[0], vc.amp[1], vc.amp[2] = vstart, vstep, vstop
+    vcs.append(vc)
+    rvs[vstep] = {}
+    for var in vars:
+        rv = h.Vector()
+        exestr = "rv.record(sec(0.5)._ref_%s_%s)" %( var, chan )
         exec(exestr)
-
-        vc = h.VClamp(sec(0.5))
-        vc.dur[0], vc.dur[1], vc.dur[2] = dur[0], dur[1], dur[2]
-        vc.amp[0], vc.amp[1], vc.amp[2] = vstart, vstep, vstop
-        vcs.append(vc)
-
-        rvs[vstep] = {}
-        for var in vars:
-            rv = h.Vector()
-            exestr = "rv.record(sec(0.5)._ref_%s_%s)" %( var, chan )
-            exec(exestr)
-            rvs[vstep][var] = rv
+        rvs[vstep][var] = rv
 
 
     tv = h.Vector()
@@ -71,14 +69,17 @@ def vc(chan = "na17a", vstart = -150, vsteps = range(-90,90,5), vstop = -150, du
     h.t = 0
     h.stdinit()
 
-    h.continuerun(h.tstop)
+    for i, dur_ in enumerate(dur_):
+        if skip[i]:
+            h.dt = dur_
+            h.steps_per_ms = 1/h.dt
+        h.continuerun(dur_)
+        h.dt = dt
+        h.steps_per_ms = 1/h.dt
 
-    for vstep in vsteps:
-        simdata[vstep] = {}
-        for var in vars:
-            simdata[vstep][var] = [ val for val in rvs[vstep][var] ]
+    for var in vars:
+        simdata[vstep][var] = [ val for val in rvs[vstep][var] ]
     
-
     t = [t for t in tv]
     simdata['t'] = t
 
