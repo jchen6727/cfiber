@@ -9,8 +9,7 @@ ENDCOMMENT
 NEURON {
 	SUFFIX na15a
 	USEION na READ ena WRITE ina
-	RANGE gnabar, ina, gna
-	RANGE C1C2_a ,C2C1_a ,C2O1_a ,O1C2_a ,C2O2_a ,O2C2_a ,O1I1_a ,I1O1_a ,I1I2_a ,I2I1_a ,I1C1_a ,C1I1_a
+	RANGE gbar, ina, g
 }
 
 UNITS {
@@ -22,7 +21,7 @@ PARAMETER {
 	v (mV)
 	ena (mV)
 	celsius (degC)
-	gnabar  = 0.1	 (mho/cm2)
+	gbar  = 0.1	 (mho/cm2)
 	
 	C1C2b2	  = 10
 	C1C2v2    = -13
@@ -88,7 +87,7 @@ PARAMETER {
 
 ASSIGNED {
 	ina  (mA/cm2)
-	gna   (mho/cm2)
+	g   (mho/cm2)
 	
 	C1C2_a (/ms)
 	C2C1_a (/ms)
@@ -124,8 +123,8 @@ INITIAL {
 
 BREAKPOINT {
 	SOLVE kin METHOD sparse
-	gna = gnabar * (O1 + O2)	: (mho/cm2)
-	ina = gna * (v - ena)   	: (mA/cm2)
+	g = gbar * (O1 + O2)	: (mho/cm2)
+	ina = g * (v - ena)   	: (mA/cm2)
 }
 
 KINETIC kin {

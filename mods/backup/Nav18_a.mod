@@ -1,16 +1,15 @@
-TITLE Nav1.5 ionic voltage-gated channel with kinetic scheme
+TITLE Nav1.8 ionic voltage-gated channel with kinetic scheme
 
 COMMENT
-A six-state markovian kinetic model of ionic channel.
+A six-states markovian kinetic model of sodium channel.
 Part of a study on kinetic models.
 Author: Piero Balbi, August 2016
 ENDCOMMENT
 
 NEURON {
-	SUFFIX na15a
+	SUFFIX na18a
 	USEION na READ ena WRITE ina
-	RANGE gnabar, ina, gna
-	RANGE C1C2_a ,C2C1_a ,C2O1_a ,O1C2_a ,C2O2_a ,O2C2_a ,O1I1_a ,I1O1_a ,I1I2_a ,I2I1_a ,I1C1_a ,C1I1_a
+	RANGE gbar, ina, g
 }
 
 UNITS {
@@ -22,73 +21,73 @@ PARAMETER {
 	v (mV)
 	ena (mV)
 	celsius (degC)
-	gnabar  = 0.1	 (mho/cm2)
+	gbar  = 0.1	 (mho/cm2)
 	
-	C1C2b2	  = 10
-	C1C2v2    = -13
-	C1C2k2	  = -10
+	C1C2b2	  = 5
+	C1C2v2    = 17
+	C1C2k2	  = -8
 	
 	C2C1b1	  = 1
-	C2C1v1    = -43
+	C2C1v1    = -23
 	C2C1k1	  = 8
-	C2C1b2	  = 10
-	C2C1v2    = -13
-	C2C1k2	  = -10
+	C2C1b2	  = 5
+	C2C1v2    = 17
+	C2C1k2	  = -8
 
-	C2O1b2	  = 10
-	C2O1v2    = -23
-	C2O1k2	  = -10
+	C2O1b2	  = 5
+	C2O1v2    = 13
+	C2O1k2	  = -8
 	
 	O1C2b1	  = 1
-	O1C2v1    = -53
+	O1C2v1    = -27
 	O1C2k1	  = 8
-	O1C2b2	  = 10
-	O1C2v2    = -23
-	O1C2k2	  = -10
+	O1C2b2	  = 5
+	O1C2v2    = 13
+	O1C2k2	  = -8
 	
-	C2O2b2	  = 0.05
-	C2O2v2	  = -10
-	C2O2k2	  = -10
+	C2O2b2	  = 0.02
+	C2O2v2	  = 15
+	C2O2k2	  = -8
 	
-	O2C2b1	  = 2
-	O2C2v1	  = -50
-	O2C2k1	  = 10
-	O2C2b2	  = 0.08
-	O2C2v2	  = -20
-	O2C2k2	  = -10
-	
-	O1I1b1	  = 7
-	O1I1v1	  = -44
-	O1I1k1	  = 13
-	O1I1b2	  = 10
-	O1I1v2	  = -19
-	O1I1k2	  = -13
+	O2C2b1	  = 0.8
+	O2C2v1	  = -60
+	O2C2k1	  = 5
+	O2C2b2	  = 0.002
+	O2C2v2	  = 10
+	O2C2k2	  = -6
+		
+	O1I1b1	  = 0.8
+	O1I1v1	  = -21
+	O1I1k1	  = 10
+	O1I1b2	  = 1
+	O1I1v2	  = -1
+	O1I1k2	  = -7
 	
 	I1O1b1	  = 0.00001
-	I1O1v1	  = -20
+	I1O1v1	  = -21
 	I1O1k1	  = 10
 	
-	I1C1b1	  = 0.19
-	I1C1v1	  = -110
-	I1C1k1	  = 7
+	I1C1b1	  = 0.28
+	I1C1v1	  = -61
+	I1C1k1	  = 9.5
 	
-	C1I1b2	  = 0.016
-	C1I1v2	  = -92
-	C1I1k2	  = -6
+	C1I1b2	  = 0.02
+	C1I1v2	  = -10
+	C1I1k2	  = -20
 	
-	I1I2b2	  = 0.00022
+	I1I2b2	  = 0.001
 	I1I2v2	  = -50
-	I1I2k2	  = -5
+	I1I2k2	  = -3
 
-	I2I1b1	  = 0.0018
-	I2I1v1	  = -90
-	I2I1k1	  = 30
+	I2I1b1	  = 0.0003
+	I2I1v1	  = -50
+	I2I1k1	  = 5
 	
 }
 
 ASSIGNED {
 	ina  (mA/cm2)
-	gna   (mho/cm2)
+	g   (mho/cm2)
 	
 	C1C2_a (/ms)
 	C2C1_a (/ms)
@@ -124,8 +123,8 @@ INITIAL {
 
 BREAKPOINT {
 	SOLVE kin METHOD sparse
-	gna = gnabar * (O1 + O2)	: (mho/cm2)
-	ina = gna * (v - ena)   	: (mA/cm2)
+	g = gbar * (O1 + O2)	: (mho/cm2)
+	ina = g * (v - ena)   	: (mA/cm2)
 }
 
 KINETIC kin {

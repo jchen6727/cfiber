@@ -8,11 +8,11 @@ h.load_file("stdrun.hoc")
 # fit functions
 # curves will fit to these functions
 
-def fx_hh( t , minf, mtau, hinf, htau):
+def fx_hh( t , m0, minf, mtau, h0, hinf, htau):
 # Hodgkin Huxley equation with m0 and h0 taken to be 0 and 1 
 # respectively -- so start at a very hyperpolarized voltage
-    m = minf - minf*np.exp(-t/mtau)
-    h = hinf + (1 - hinf)*np.exp(-t/htau)
+    m = minf + (m0 - minf) * np.exp(-t/mtau)
+    h = hinf + (h0 - hinf) * np.exp(-t/htau)
     return m*m*m*h
 
 def fx_ab( v , a0, b0, delta, s):
@@ -33,8 +33,9 @@ def fx_bz( v , v2m, sm):
 
 def vc(chan = "hh", record = "gna", vstart = -150, vsteps = range(-50, 50, 10), vstop = 0, dur = [25,25,25], gna_normalize = True):
     varstr = record + "_" + chan
-    simData = {'sim':varstr, 'vstart':vstart, 'vsteps':vsteps, 'vstop': vstop, 'dur': dur, 'dt': h.dt}
+    simdata = {'sim':varstr, 'vstart':vstart, 'vsteps':vsteps, 'vstop': vstop, 'dur': dur, 'dt': h.dt}
     h.tstop = dur[0]+dur[1]+dur[2]
+    h.celsius = 37
     secs = [] #sections
     vcs  = [] #voltage clamps
     rvs  = [] #record  vectors
@@ -48,7 +49,7 @@ def vc(chan = "hh", record = "gna", vstart = -150, vsteps = range(-50, 50, 10), 
             if chan == "hh":
                 sec.gnabar_hh = 1
             else: 
-                exestr = "sec.gbar_" + chan + " = 1"
+                exestr = "sec.gnabar_" + chan + " = 1"
                 exec(exestr)
         vc = h.VClamp(sec(0.5))
         vc.dur[0], vc.dur[1], vc.dur[2] = dur[0], dur[1], dur[2]
@@ -82,22 +83,22 @@ def vc(chan = "hh", record = "gna", vstart = -150, vsteps = range(-50, 50, 10), 
 
     ax.set_title( varstr + "_vclamp_" + str(vstart) + "__E--" + str(vstop))
     
-    simData['t'] = t
+    simdata['t'] = t
     for i, vstep in enumerate(vsteps):
-        simData[vstep] = rvs[i]
+        simdata[vstep] = rvs[i]
         ax.plot(t, rvs[i], label = str(vstep))
 
     ax.legend(fontsize=8)
     plt.savefig(varstr + "_vclamp.png")
     # close the plot so you can call it again
     plt.close()
-    return simData
+    return simdata
 
-def fit_hh( strt, stop, t, gna, bounds = [ [0,0,0,0], [1, np.inf,1,np.inf] ] ):
+def fit_hh( strt, stop, t, gna, bounds = [ [0, 0, 0, 1, 0, 0], [0, 1, np.inf, 1, 1, np.inf] ] ):
 
-# def fx_hh( t , minf, mtau, hinf, htau):
-#     m = minf - minf*np.exp(-t/mtau)
-#     h = hinf + (1 - hinf)*np.exp(-t/htau)
+# def fx_hh( t , m0, minf, mtau, h0, hinf, htau):
+#     m = minf + (m0 - minf)*np.exp(-t/mtau)
+#     h = hinf + (h0 - hinf)*np.exp(-t/htau)
 #     return m*m*m*h
 
 # for a high enough voltage, for a long enough time, m->1, h->0
@@ -142,16 +143,23 @@ def get_hh(v = 0):
     h.rates_hh(v)
     return {'minf': h.minf_hh, 'mtau': h.mtau_hh, 'hinf': h.hinf_hh, 'htau': h.htau_hh}
 
-def run_hh( strt, stop , chan = 'na19a', record = 'g', vstart = -150, vsteps = range(50,- 75, -5), vstop = -150, dur = [150,150,150]):
+def run_hh( strt = 2001, stop=3999, chan = 'na17a', record = 'g', vstart = -150, vsteps = range(50,- 75, -5), vstop = -150, dur = [50,50,50]):
     # run voltage high to low
-    simData = vc(chan = chan, record = record, vstart = vstart, vsteps=vsteps, vstop = vstop, dur = dur)
+    # for na17a
+    simdata = vc(chan = chan, record = record, vstart = vstart, vsteps=vsteps, vstop = vstop, dur = dur)
 
+    # for hh
+    vsteps = [40, 10, -20,-50]
+    simdata = vc(vsteps = vsteps)
+    strt = 1001
+    stop = 1999
     # initialize dictionary to store values
     # reverse how we feed the voltages to
     # fit function to help generate useful
     # bounds
     fitdata = {'v':vsteps}
     hhdata = {'v':vsteps}
+
     for entry in ['minf', 'mtau', 'hinf', 'htau']:
         fitdata[entry] = []
         hhdata[entry]  = []
@@ -171,7 +179,7 @@ def run_hh( strt, stop , chan = 'na19a', record = 'g', vstart = -150, vsteps = r
     # minf should be same or decreasing, hinf should be 
     # same or increasing as v decreases
 
-        fdata, cov = fit_hh(strt, stop, simData['t'], simData[v], bounds)
+        fdata, cov = fit_hh(strt, stop, simdata['t'], simdata[v], bounds)
         edata      = get_hh(v)
 
         minf = fdata['minf']
@@ -205,23 +213,28 @@ def run_hh( strt, stop , chan = 'na19a', record = 'g', vstart = -150, vsteps = r
 
     return fitdata, hhdata
 
-def plotData( record, vv, fitdata, hhdata ):
+def plot_data( title = "title", xlabel = "xlabel", ylabel = "ylabel", xdata = [0], labels = ['0'], ydatas = [ [0] ] ):
+    fig, ax = plt.subplots()
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
 
     fig, ax = plt.subplots()
-    ax.set_xlabel("voltage (mV)")
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
 
-    ax.set_ylabel(record)
+    ax.set_title(title)
 
-    ax.set_title( record + "_vclamp")
+    for i, label in enumerate(labels):
+        ax.plot(xdata, ydatas[i], label = label)
 
-    ax.plot(vv, fitdata, label = 'fit')
-    ax.plot(vv, hhdata, label = 'hh')
+    ax.legend()
+    plt.savefig( title + ".png")
 
-    ax.legend(fontsize=8)
-    plt.savefig("hh_" + record + "_vclamp.png")
+    plt.cla()
+    plt.clf()
     plt.close()
 
 if __name__ == "__main__":
-    print("simData = vc(chan, record, vstart, vsteps, vstop, dur)")
-    print("simData.keys()")
+    print("simdata = vc(chan, record, vstart, vsteps, vstop, dur)")
+    print("simdata.keys()")
 
