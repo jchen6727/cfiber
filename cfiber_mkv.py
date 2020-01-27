@@ -14,7 +14,8 @@ class cfiber():
         #if we treat the total expression of NaV channels as 1
         #we can distribute conductance as approximately
         #gnabar17 = 1/6, gnabar18 = 3/6, gnabar19 = 2/6
-        #gnabar19 does not carry role in action potential propagation
+        #if using transcriptome profile
+
     def __init__(self,x=0,y=0,z=0,ID=0, gnabar17=0.04/6, gnabar18=0.12/6, gnabar19=0.08/6):
         self.regions = {'all': [], 'axn': [], 'drg': [], 'soma': []}
         self.gnabar17, self.gnabar18, self.gnabar19 = gnabar17, gnabar18, gnabar19
@@ -50,11 +51,11 @@ class cfiber():
             sec.Ra    = 100
             
             sec.insert('na17a')
-            sec.gbar_na17a = self.gnabar17
+            sec.gnabar_na17a = self.gnabar17
             sec.insert('na18a')
-            sec.gbar_na18a = self.gnabar18
+            sec.gnabar_na18a = self.gnabar18
             sec.insert('na19a')
-            sec.gbar_na19a = self.gnabar19
+            sec.gnabar_na19a = self.gnabar19
 
             sec.insert('borgkdr')
             sec.gkdrbar_borgkdr = 0.04
@@ -74,9 +75,9 @@ class cfiber():
 
         for sec in self.regions['soma']:
             
-            sec.gbar_na17a = self.gnabar17/2
-            sec.gbar_na18a = self.gnabar18/2
-            sec.gbar_na19a = self.gnabar19/2
+            sec.gnabar_na17a = self.gnabar17/2
+            sec.gnabar_na18a = self.gnabar18/2
+            sec.gnabar_na19a = self.gnabar19/2
 
     def connect_secs(self):
         self.drgperi.connect(self.axnperi)
@@ -91,9 +92,6 @@ class cfiber():
             h.finitialize(-60)
             h.fcurrent()
             sec.e_pas = sec.v + (sec.ina + sec.ik) / sec.g_pas
-
-
-
 
 
 

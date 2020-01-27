@@ -29,13 +29,30 @@ vc_mkv_vars = [
     ]
 
 # specific voltage clamp for markov models
-def vc(chan = "na17a", vstart = -150, vstep = 0, vstop = -150, dur = [5,5,5], skip = [True, False, True], dt = 0.025, vars = vc_mkv_vars):
-    simdata = {'chan': chan, 'vars': vars, 'vstart':vstart, 'vsteps':vsteps, 'vstop': vstop, 'dur': dur, 'dt': dt}
+def activation(chan = "na17a"):
+    adata = {}
+    
+
+def inactivation(chan = "na17a", v = -65, ddur = 500, durstop = 50000):
+    idata = {}
+    durs  = range(0, durstop, ddur)
+    idata['durs'] = durs
+    idata['gmax'] = []
+    for var in vc_mkv_states:
+        idata['var'] = []
+    for dur in durs:
+        simdata = voltage_clamp(chan = "na17a", vstart = v, dur = [dur, 50, 0], skip = [True, False, False], vars = vc_mkv_states)
+        idata['gmax'].append(max(simdata['gna']))
+        for var in vc_mkv_states:
+            idata['var'].append(simdata['var'][1])
+    return idata
+
+def voltage_clamp(chan = "na17a", vinit = -150, vstart = -150, vstep = 0, vstop = -150, dur = [50,50,50], skip = [False, False, False], dt = 0.025, vars = vc_mkv_vars):
+    simdata = {'chan': chan, 'vars': vars, 'vstart':vstart, 'vstep':vstep, 'vstop': vstop, 'dur': dur, 'dt': dt}
     h.dt = dt
     h.steps_per_ms = 1/h.dt
-    h.tstop = dur[0]+dur[1]+dur[2]
 
-    h.v_init = vstart
+    h.v_init = vinit
 
     h.celsius = 36
 
@@ -55,12 +72,12 @@ def vc(chan = "na17a", vstart = -150, vstep = 0, vstop = -150, dur = [5,5,5], sk
     vc.dur[0], vc.dur[1], vc.dur[2] = dur[0], dur[1], dur[2]
     vc.amp[0], vc.amp[1], vc.amp[2] = vstart, vstep, vstop
     vcs.append(vc)
-    rvs[vstep] = {}
+    rvs = {}
     for var in vars:
         rv = h.Vector()
         exestr = "rv.record(sec(0.5)._ref_%s_%s)" %( var, chan )
         exec(exestr)
-        rvs[vstep][var] = rv
+        rvs[var] = rv
 
 
     tv = h.Vector()
@@ -69,35 +86,34 @@ def vc(chan = "na17a", vstart = -150, vstep = 0, vstop = -150, dur = [5,5,5], sk
     h.t = 0
     h.stdinit()
 
-    for i, dur_ in enumerate(dur_):
+    tstop = 0
+    for i, dur_ in enumerate(dur):
+        tstop+=dur_
         if skip[i]:
-            h.dt = dur_
-            h.steps_per_ms = 1/h.dt
-        h.continuerun(dur_)
+            if dur_ != 0:
+                h.dt = dur_
+                h.steps_per_ms = 1/h.dt
+        h.continuerun(tstop)
         h.dt = dt
         h.steps_per_ms = 1/h.dt
 
     for var in vars:
-        simdata[vstep][var] = [ val for val in rvs[vstep][var] ]
+        simdata[var] = [ val for val in rvs[var] ]
     
     t = [t for t in tv]
     simdata['t'] = t
 
     return simdata
    
-def plot_data( title = "title", xlabel = "xlabel", ylabel = "ylabel", xdata = [0], labels = ['0'], ydatas = [ [0] ] ):
+def plot_data( title = "title", xaxis = "xlabel", yaxis = "ylabel", xdatas = [ [0] ], labels = ['0'], ydatas = [ [0] ] ):
     fig, ax = plt.subplots()
-    ax.set_xlabel(xlabel)
-    ax.set_ylabel(ylabel)
-
-    fig, ax = plt.subplots()
-    ax.set_xlabel(xlabel)
-    ax.set_ylabel(ylabel)
+    ax.set_xlabel(xaxis)
+    ax.set_ylabel(yaxis)
 
     ax.set_title(title)
 
     for i, label in enumerate(labels):
-        ax.plot(xdata, ydatas[i], label = label)
+        ax.plot(xdatas[i], ydatas[i], label = label)
 
     ax.legend()
     plt.savefig( title + ".png")
@@ -106,7 +122,11 @@ def plot_data( title = "title", xlabel = "xlabel", ylabel = "ylabel", xdata = [0
     plt.clf()
     plt.close()
 
-def get_rates( simdata ):
+def get_rates( chan = "na17a" ):
+    
+
+
+# just generate sections no voltage clamps
     ydatas_dict = {}
     ydatas_list = []
     index = int(simdata['dur'][0]/simdata['dt']) + 1
