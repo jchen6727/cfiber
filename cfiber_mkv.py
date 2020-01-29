@@ -16,9 +16,11 @@ class cfiber():
         #gnabar17 = 1/6, gnabar18 = 3/6, gnabar19 = 2/6
         #if using transcriptome profile
 
-    def __init__(self,x=0,y=0,z=0,ID=0, gnabar17=0.04/6, gnabar18=0.12/6, gnabar19=0.08/6):
+    def __init__(self,x=0,y=0,z=0,ID=0, navs = {'na17a': 0.04/6, 'na18a': 0.12/6, 'na19a': 0.08/6} ):
         self.regions = {'all': [], 'axn': [], 'drg': [], 'soma': []}
-        self.gnabar17, self.gnabar18, self.gnabar19 = gnabar17, gnabar18, gnabar19
+        
+        self.navs = navs
+
         self.set_morphology()
         self.insert_conductances()
         
@@ -50,12 +52,10 @@ class cfiber():
         for sec in self.regions['axn'] + self.regions['drg']:
             sec.Ra    = 100
             
-            sec.insert('na17a')
-            sec.gnabar_na17a = self.gnabar17
-            sec.insert('na18a')
-            sec.gnabar_na18a = self.gnabar18
-            sec.insert('na19a')
-            sec.gnabar_na19a = self.gnabar19
+            for nav in self.navs:
+                sec.insert(nav)
+                exestr = "sec.gnabar_%s = self.navs[nav]" %(nav)
+                exec(exestr)
 
             sec.insert('borgkdr')
             sec.gkdrbar_borgkdr = 0.04
@@ -74,10 +74,11 @@ class cfiber():
             sec.vshift_iM = -5
 
         for sec in self.regions['soma']:
-            
-            sec.gnabar_na17a = self.gnabar17/2
-            sec.gnabar_na18a = self.gnabar18/2
-            sec.gnabar_na19a = self.gnabar19/2
+
+            for nav in self.navs:
+                sec.insert(nav)
+                exestr = "sec.gnabar_%s = self.navs[nav] / 2" %(nav)
+                exec(exestr)
 
     def connect_secs(self):
         self.drgperi.connect(self.axnperi)
@@ -88,12 +89,14 @@ class cfiber():
 
     def initialize_values(self):
         #sets passive current to allow for steady state voltage.
-        for sec in self.regions['all']:
-            h.finitialize(-60)
+        e_pas = [-65, -65, -62, -62, -62, -62]
+        for i, sec in enumerate(self.regions['all']):
+            h.finitialize(-65)
             h.fcurrent()
             sec.e_pas = sec.v + (sec.ina + sec.ik) / sec.g_pas
-
-
+            print(sec.e_pas)
+            sec.e_pas = e_pas[i]
+            print(sec.e_pas)
 
 '''      
 'axnperi'

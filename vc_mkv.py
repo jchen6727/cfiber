@@ -29,22 +29,35 @@ vc_mkv_vars = [
     ]
 
 # specific voltage clamp for markov models
-def activation(chan = "na17a"):
+def deinactivation(chan = "na17a", v = -65, ddur = 500, durstop = 50000):
     adata = {}
+    durs = range(0, durstop, ddur)
+    adata['dur'] = durs
+    adata['gmax'] = []
+    for var in vc_mkv_states:
+        adata[var] = []
+    for dur in durs:
+        simdata = voltage_clamp(chan = "na17a", vinit = 150, vstart = v, vstep = 0, dur = [dur, 50, 0], skip = [True, False, False], vars = vc_mkv_states)
+        adata['gmax'].append(max(simdata['gna']))
+        for var in vc_mkv_states:
+            adata[var].append(simdata[var][1])
+    return adata
     
 
 def inactivation(chan = "na17a", v = -65, ddur = 500, durstop = 50000):
+# study voltage dependence of inactivation
+# O1 -> I1 -> I2
     idata = {}
     durs  = range(0, durstop, ddur)
-    idata['durs'] = durs
+    idata['dur'] = durs
     idata['gmax'] = []
     for var in vc_mkv_states:
-        idata['var'] = []
+        idata[var] = []
     for dur in durs:
         simdata = voltage_clamp(chan = "na17a", vstart = v, dur = [dur, 50, 0], skip = [True, False, False], vars = vc_mkv_states)
         idata['gmax'].append(max(simdata['gna']))
         for var in vc_mkv_states:
-            idata['var'].append(simdata['var'][1])
+            idata[var].append(simdata[var][1])
     return idata
 
 def voltage_clamp(chan = "na17a", vinit = -150, vstart = -150, vstep = 0, vstop = -150, dur = [50,50,50], skip = [False, False, False], dt = 0.025, vars = vc_mkv_vars):
@@ -56,14 +69,10 @@ def voltage_clamp(chan = "na17a", vinit = -150, vstart = -150, vstep = 0, vstop 
 
     h.celsius = 36
 
-    secs = [] #sections
-    vcs  = [] #voltage clamps
     rvs  = {} #record  vectors
     
-
     sec = h.Section()
     sec.insert(chan)
-    secs.append(sec)
 
 # normalize gna -> gnabar = 1
     exestr = "sec.gnabar_%s = 1" %(chan)
@@ -71,8 +80,7 @@ def voltage_clamp(chan = "na17a", vinit = -150, vstart = -150, vstep = 0, vstop 
     vc = h.VClamp(sec(0.5))
     vc.dur[0], vc.dur[1], vc.dur[2] = dur[0], dur[1], dur[2]
     vc.amp[0], vc.amp[1], vc.amp[2] = vstart, vstep, vstop
-    vcs.append(vc)
-    rvs = {}
+
     for var in vars:
         rv = h.Vector()
         exestr = "rv.record(sec(0.5)._ref_%s_%s)" %( var, chan )
@@ -122,21 +130,23 @@ def plot_data( title = "title", xaxis = "xlabel", yaxis = "ylabel", xdatas = [ [
     plt.clf()
     plt.close()
 
-def get_rates( chan = "na17a" ):
-    
-
-
+def get_rates( chan = "na17a", vs = range(-90,90) ):
 # just generate sections no voltage clamps
-    ydatas_dict = {}
-    ydatas_list = []
-    index = int(simdata['dur'][0]/simdata['dt']) + 1
+    sec = h.Section()
+    sec.insert(chan)
+
+    rates_dict = {'v': vs}
     for rate in vc_mkv_rates:
-        ydatas_dict[rate] = [  simdata[v][rate][index] for v in simdata['vsteps'] ]
-        ydatas_list.append(ydatas_dict[rate])
+        rates_dict[rate] = []
+    for v in vs:
+        h.v_init = v
+        h.stdinit()
+        simdata = voltage_clamp( chan = chan, vinit = v, vstart = v, vstep = v, vstop = v, dur = [0,0,0], dt = 1, vars = vc_mkv_rates)
+        for rate in vc_mkv_rates:
+            rates_dict[rate].append(simdata[rate][0])
 
-    plot_data(title = simdata['chan'] + '_rates', xlabel = 'voltage (mV)', xdata = simdata['vsteps'], ylabel = "rate", labels = vc_mkv_rates, ydatas = ydatas_list )
-    return ydatas_dict, ydatas_list
-
+    plot_data(title = chan + '_rates', xaxis = 'voltage (mV)', yaxis = "rate", xdatas = [vs for rate in vc_mkv_rates], labels = vc_mkv_rates, ydatas = [rates_dict[rate] for rate in vc_mkv_rates] )
+    return rates_dict
 
 def plot_states( title, simdata_t, simdata_v):
 # specifically for the MM channels

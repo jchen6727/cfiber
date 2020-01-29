@@ -75,8 +75,8 @@ PARAMETER {
 	C1I1b2	  = 0.025
 	C1I1v2	  = -55
 	C1I1k2	  = -20
-
-	I1I2b2    = 0
+	
+	I1I2b2	  = 0.00001
 	I1I2v2	  = -80
 	I1I2k2	  = -20
 
@@ -118,30 +118,27 @@ STATE {
 
 INITIAL {
 	Q10 = 3^((celsius-20(degC))/10 (degC))
-	I2 = 0
 	SOLVE kin
 	STEADYSTATE sparse
 }
 
 BREAKPOINT {
 	SOLVE kin METHOD sparse
-	I2 = 0
 	gna = gnabar * (O1 + O2)	: (mho/cm2)
 	ina = gna * (v - ena)   	: (mA/cm2)
 }
 
 KINETIC kin {
 	rates(v)
-
+	
 	~ C1 <->  C2 (C1C2_a, C2C1_a)
 	~ C2 <->  O1 (C2O1_a, O1C2_a)
 	~ C2 <->  O2 (C2O2_a, O2C2_a)
 	~ O1 <->  I1 (O1I1_a, I1O1_a)
 	~ I1 <->  C1 (I1C1_a, C1I1_a)
-:   removing I1 <-> I2 flux. 
-:	~ I1 <->  I2 (I1I2_a, I2I1_a)
+	~ I1 <->  I2 (I1I2_a, I2I1_a)
 	
-	CONSERVE O1 + O2 + C1 + C2 + I1 = 1
+	CONSERVE O1 + O2 + C1 + C2 + I1 + I2 = 1
 }
 
 FUNCTION rates2(v, b, vv, k) {

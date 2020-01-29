@@ -1,11 +1,12 @@
 from netpyne import specs
 from netpyne.batch import Batch
-
+import numpy as np
 params = specs.ODict()
 
-params['gnabar17'] = []
-params['gnabar18'] = []
-params['gnabar19'] = []
+params['gnaT'] = np.linspace(0, 0.1, 10)
+params['gna17r'] = np.logspace( 1, 5, 5 )
+params['gna17o'] = [0, 1]
+params['gna18o'] = [0, 1]
 
 b = Batch(params = params, cfgFile = 'cfg.py', netParamsFile = 'netParams.py')
 
