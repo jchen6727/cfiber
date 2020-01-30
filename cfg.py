@@ -46,6 +46,6 @@ cfg.na18o = 1
 # * 10 too much for gnabar17
 #somewhere around 175 for original gnabar17
 #cfg.navs = {'nav1p7': 0.04, 'na18a': 0, 'na19a': 0}
-cfg.navs = {'na17a': cfg.gnaT * cfg.na17r * na17o, 'na18a': cfg.gnaT * }
+cfg.navs = {'na17a': cfg.gnaT * cfg.na17r * cfg.na17o, 'na18a': cfg.gnaT}
 #cfg.navs = {'na17a': 0.04/3 * 100, 'na18a': 0.04}
 #cfg.navs = {'na17a': 0.04/6, 'na18a': 0.04/2, 'na19a': 0.04/3 }
