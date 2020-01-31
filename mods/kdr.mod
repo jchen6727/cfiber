@@ -26,8 +26,7 @@ PARAMETER {
 NEURON {
 	SUFFIX borgkdr
 	USEION k READ ek WRITE ik
-        RANGE gkdrbar,gkdr
-        GLOBAL ninf,linf,taun,taul
+        RANGE gkdrbar,gkdr, ninf,linf,taun,taul
 }
 
 STATE {

@@ -57,6 +57,8 @@ class cfiber():
                 exestr = "sec.gnabar_%s = self.navs[nav]" %(nav)
                 exec(exestr)
 
+                sec.ena = 80
+
             sec.insert('borgkdr')
             sec.gkdrbar_borgkdr = 0.04
             sec.ek = -90

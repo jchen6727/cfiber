@@ -4,8 +4,8 @@ from netpyne.specs import Dict, ODict
 cfg = specs.SimConfig()  
 
 # Run parameters
-cfg.duration = 300
-cfg.dt = 0.05
+cfg.duration = 500
+cfg.dt = 0.025
 cfg.hParams = {'celsius': 6.7, 'v_init': -65}
 
 cfg.cvode_active = False
@@ -13,8 +13,12 @@ cfg.cvode_active = False
 # cfg.printPopAvgRates = True
 
 # Recording 
-cfg.recordTraces = {'v': {'sec': 'axnperi', 'loc': 0.5, 'var': 'v'},
-                    'gna_17': {'sec': 'axnperi', 'loc': 0.5, 'var': 'na17a'}}
+cfg.recordTraces = {'v1': {'sec': 'axnperi', 'loc': 0.1, 'var': 'v'},
+                    'v3': {'sec': 'axnperi', 'loc': 0.3, 'var': 'v'},
+                    'v5': {'sec': 'axnperi', 'loc': 0.5, 'var': 'v'},
+                    'v7': {'sec': 'axnperi', 'loc': 0.7, 'var': 'v'},
+                    'v9': {'sec': 'axnperi', 'loc': 0.9, 'var': 'v'}}
+#                    'gna_17': {'sec': 'axnperi', 'loc': 0.5, 'var': 'gna_na17a'},
 #                    'gna_18': {'sec': 'axnperi', 'loc': 0.5, 'var': 'gna_na18a'},
 #                    'gna_19': {'sec': 'axnperi', 'loc': 0.5, 'var': 'gna_na19a'}}
 
@@ -35,17 +39,19 @@ cfg.saveJson = True
 cfg.saveDataInclude = ['simData', 'simConfig', 'netParams', 'net']
 
 # Analysis and plotting 
-cfg.analysis.plotTraces = Dict({'include': ['cfiber'], 'overlay': False, 'oneFigPer': 'cell', 'saveFig': True, 
-                             'showFig': False, 'timeRange': [0,cfg.duration]})
+cfg.analysis.plotTraces = Dict({'include': ['cfiber'], 'overlay': True, 'oneFigPer': 'cell', 'saveFig': True, 
+                             'showFig': False, 'timeRange': [200,cfg.duration]})
 
 # Parameters
-cfg.gnaT = 0.4
-cfg.na17r = 75
-cfg.na17o = 1
-cfg.na18o = 1
+cfg.gna17 = 1.4
+cfg.gna18 = 0.01325
+
+cfg.block = [ 0, 1 ]
+
+#cfg.navs = {'na17a': cfg.gnaT * cfg.na17r * cfg.na17o, 'na18a': cfg.gnaT * cfg.na18o}
 # * 10 too much for gnabar17
 #somewhere around 175 for original gnabar17
 #cfg.navs = {'nav1p7': 0.04, 'na18a': 0, 'na19a': 0}
-cfg.navs = {'na17a': cfg.gnaT * cfg.na17r * cfg.na17o, 'na18a': cfg.gnaT}
+#cfg.navs = {'na17a': cfg.gnaT * cfg.na17r * cfg.na17o, 'na18a': cfg.gnaT * cfg.na18o}
 #cfg.navs = {'na17a': 0.04/3 * 100, 'na18a': 0.04}
 #cfg.navs = {'na17a': 0.04/6, 'na18a': 0.04/2, 'na19a': 0.04/3 }

@@ -25,8 +25,7 @@ PARAMETER {
 NEURON {
 	SUFFIX cal
 	USEION ca WRITE ica
-        RANGE gcalbar, gcal, m
-        GLOBAL minf,tau
+        RANGE gcalbar, gcal, m, minf,tau
 }
 
 STATE {

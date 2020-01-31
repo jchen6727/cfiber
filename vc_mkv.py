@@ -67,7 +67,7 @@ def voltage_clamp(chan = "na17a", vinit = -150, vstart = -150, vstep = 0, vstop 
 
     h.v_init = vinit
 
-    h.celsius = 36
+    h.celsius = 6.7
 
     rvs  = {} #record  vectors
     
