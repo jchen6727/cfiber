@@ -50,17 +50,17 @@ BREAKPOINT {
 	ikim = ik
 }
 
-:DERIVATIVE states {
-:       evaluate_fct(v)
-:
-:       m'= (m_inf-m) / tau_m 
-:}
-  
-PROCEDURE states() {
-        evaluate_fct(v+vshift)
+DERIVATIVE states {
+       evaluate_fct(v)
 
-        m= m + (1-exp(-dt/tau_m))*(m_inf-m)
+       m'= (m_inf-m) / tau_m 
 }
+  
+:PROCEDURE states() {
+:        evaluate_fct(v+vshift)
+:
+:        m= m + (1-exp(-dt/tau_m))*(m_inf-m)
+:}
 
 UNITSOFF
 INITIAL {
