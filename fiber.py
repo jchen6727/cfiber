@@ -17,6 +17,8 @@ class cfiber():
         
         self.navs = navs
 
+        self.temp = temp
+
         self.set_morphology()
         self.insert_conductances()
         

@@ -43,12 +43,12 @@ cfg.analysis.plotTraces = Dict({'include': ['cfiber'], 'overlay': True, 'oneFigP
                              'showFig': False, 'timeRange': [200,cfg.duration]})
 
 # Parameters
-cfg.gna17 = 1.1
+cfg.gna17 = 0.013
 cfg.gna18 = 0.013
 
-cfg.block = [ 1, 1 ]
+cfg.block = [ 0, 1 ]
 
-cfg.delay = [ 250, 300, 350, 400, 450 ]
+cfg.delay = [ 250 ]
 
 #cfg.navs = {'na17a': cfg.gnaT * cfg.na17r * cfg.na17o, 'na18a': cfg.gnaT * cfg.na18o}
 # * 10 too much for gnabar17
