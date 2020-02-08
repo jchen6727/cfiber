@@ -1,14 +1,13 @@
 COMMENT
 
-Human WT NaV1.7 Channel 
+NaV1.8 Channel (from unknown)
 reproduced from 
-Sheets Et. Al (2007)
+Sheets et al. (2007)
+Maingret et al. (2008)
 and
 Tigerholm Et. Al (2014)
 
 ENDCOMMENT
-
-
 
 UNITS {
     (mV) = (millivolt)
@@ -17,12 +16,13 @@ UNITS {
 }
 
 NEURON {
-    SUFFIX nav17
+    SUFFIX nav18
     USEION na READ ena WRITE ina
     RANGE gnabar, gna, ina
     RANGE malpha, mbeta, mtau, minf
     RANGE halpha, hbeta, htau, hinf
     RANGE salpha, sbeta, stau, sinf
+    RANGE ualpha, ubeta, utau, uinf
 
 }
 
@@ -44,25 +44,29 @@ ASSIGNED {
     malpha
     halpha
     salpha
+    ualpha
 
     mbeta
     hbeta
     sbeta
+    ubeta
 
     mtau (ms) 
     htau (ms)
     stau (ms)
+    utau (ms)
 
     minf
     hinf
     sinf
+    uinf
 
     tadj
 
 }
 
 STATE{
-    m h s
+    m h s u
 }
 
 UNITSOFF
@@ -72,12 +76,13 @@ INITIAL{
     m = minf
     h = hinf
     s = sinf
+    u = uinf
 }
 
 BREAKPOINT{
     SOLVE states METHOD cnexp
     
-    gna = gnabar * m^3 * h * s
+    gna = gnabar * m^3 * h * s * u
     ina = gna * (v - ena)
 }
 
@@ -86,6 +91,7 @@ DERIVATIVE states{
     m' = (minf-m)/mtau
     h' = (hinf-h)/htau
     s' = (sinf-s)/stau
+    u' = (uinf-u)/utau
 }
 
 
@@ -94,8 +100,8 @@ PROCEDURE settables(v (mV)){
 :    FROM -100 TO 100 WITH 200
 
     tadj = 2.5 ^ ( ( celsius - 21) / 10 )
-    malpha = 15.5 / ( 1 + exp( (v-5   ) / -12.08 ) )
-    mbeta  = 35.2 / ( 1 + exp( (v+72.7) /  16.7  ) )
+    malpha = 2.85 - 2.839 / ( 1 + exp( (v-1.159 ) / 13.95  ) )
+    mbeta  = 7.6205       / ( 1 + exp( (v+46.463) / 8.8289 ) )
     mtau   = 1 / (malpha + mbeta) / tadj
     minf   = malpha / (malpha + mbeta)
 
