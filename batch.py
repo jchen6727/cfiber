@@ -10,7 +10,7 @@ params = specs.ODict()
 #good target -- 0.013 -> 0.014
 #params['gna18'] = [ x for x in np.linspace(0.01, 0.02, 11)]
 params['gna18'] = [ x for x in np.linspace(0.013000, 0.013005, 6)]
-params['block'] = [ [0, 1] ]
+params['cndct'] = [ [1, 1] ]
 #params['block'] = [ [0, 1], [1, 1], [1, 0] ]
 
 b = Batch(params = params, cfgFile = 'cfg.py', netParamsFile = 'netParams.py')

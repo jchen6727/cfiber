@@ -5,10 +5,10 @@ cfg = specs.SimConfig()
 
 # Run parameters
 cfg.duration = 500
-cfg.dt = 0.01
-cfg.hParams = {'celsius': 22, 'v_init': -65}
+#cfg.dt = 0.01
+cfg.hParams = {'celsius': 37, 'v_init': -60}
 
-cfg.cvode_active = False
+cfg.cvode_active = True
 # cfg.printRunTime = 0.1
 # cfg.printPopAvgRates = True
 
@@ -40,13 +40,13 @@ cfg.saveDataInclude = ['simData', 'simConfig', 'netParams', 'net']
 
 # Analysis and plotting 
 cfg.analysis.plotTraces = Dict({'include': ['cfiber'], 'overlay': True, 'oneFigPer': 'cell', 'saveFig': True, 
-                             'showFig': False, 'timeRange': [200,cfg.duration]})
+                             'showFig': False, 'timeRange': [0,cfg.duration]})
 
 # Parameters
-cfg.gna17 = 0.013
+cfg.gna17 = 0.005
 cfg.gna18 = 0.013
 
-cfg.block = [ 0, 1 ]
+cfg.cndct = [ 1.75, 1.75 ]
 
 cfg.delay = [ 250 ]
 
