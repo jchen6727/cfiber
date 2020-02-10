@@ -15,8 +15,14 @@ navs = {'nav17': cfg.gna17 * cfg.cndct[0], 'na18a': cfg.gna18 * cfg.cndct[1]}
 kvs  = {'kv4'  : 0.01  , 'kv2'  : 0.002 , 'kv1'  : 0.00006 }
 #cfiber=netParams.importCellParams(label='cfiber', conds={'cellType': 'cfiber'}, fileName='cfiber_mkv.py', cellName='cfiber', cellArgs={ 'navs': navs })
 cfiber=netParams.importCellParams(label='cfiber', conds={'cellType': 'cfiber'}, fileName='fiber.py', cellName='cfiber', cellArgs={ 'navs': navs, 'kvs': kvs})
-netParams.cellParams['cfiber'] = cfiber
+netParams.cellParams['cfiber0'] = cfiber
+#netParams.cellParams['cfiber1'] = cfiber
 
 for delay in cfg.delay:
-    netParams.stimSourceParams[delay] = {'type': 'IClamp', 'delay': delay, 'dur': 5, 'amp': 2}
-    netParams.stimTargetParams[delay] = {'source': delay, 'conds': {'popLabel': 'cfiber'}, 'sec': 'axnperi', 'loc': 0.0}
+    key = 'ic%i'%delay
+    netParams.stimSourceParams[key] = {'type': 'IClamp', 'delay': delay, 'dur': 5, 'amp': 2}
+    netParams.stimTargetParams[key] = {'source': key, 'conds': {'popLabel': 'cfiber'}, 'sec': 'axnperi', 'loc': 0.0}
+
+#key = 'vc%i'%delay
+#netParams.stimSourceParams['vc%i'%cfg.delay[0]] = {'type': 'VClamp'}
+#netParams.stimSourceParams['vc%i'%cfg.delay[0]] = {}
