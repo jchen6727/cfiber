@@ -24,10 +24,14 @@ NEURON {
     RANGE halpha, hbeta, htau, hinf
     RANGE salpha, sbeta, stau, sinf
 
+    RANGE emut, rmut
+
 }
 
 PARAMETER{ 
     gnabar = 0.1066 (S/cm2)
+    emut   = 0
+    rmut   = 0.5
 
 }
 

@@ -11,12 +11,20 @@ class cfiber():
 
     def __init__(self,x=0,y=0,z=0,ID=0, 
                  navs = {'na17a': 0.04/6, 'na18a': 0.12/6, 'na19a': 0.08/6  }, 
-                 kvs  = {'kv4'  : 0.01  , 'kv2'  : 0.002 , 'kv1'  : 0.00006 }):
+                 kvs  = {'kv4'  : 0.01  , 'kv2'  : 0.002 , 'kv1'  : 0.00006 },
+                 ena  = 70,
+                 ek   = -70,
+                 rmut = 0.5):
         self.regions = {'all': [], 'axn': []}
         
-        self.navs = navs
+        self.navs = navs # sodium channel dictionary
+        self.ena  = ena  # Nernst of sodium
 
-        self.kvs  = kvs
+        self.kvs  = kvs  # potassium channel dictionary
+        self.ek   = ek   # Nernst of potassium
+
+        self.emut = (ena + ek) / 2 # mutated reversal in between sodium and potassium channel
+        self.rmut = rmut           # percent mutation RNA
 
         self.set_morphology()
         self.insert_conductances()
@@ -50,14 +58,14 @@ class cfiber():
                 exestr = "sec.gnabar_%s = self.navs[nav]" %(nav)
                 exec(exestr)
 
-            sec.ena = 70
+            sec.ena = self.ena
 
             for kv in self.kvs:
                 sec.insert(kv)
                 exestr = "sec.gkbar_%s = self.kvs[kv]" %(kv)
                 exec(exestr)
 
-            sec.ek -70
+            sec.ek  = self.ek
 
             sec.insert('pas')
             sec.g_pas = 1/10000
