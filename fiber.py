@@ -51,7 +51,7 @@ class cfiber():
     def insert_conductances (self):
         
         for sec in self.regions['axn']:
-            sec.Ra    = 100
+            sec.Ra    = 1000
             
             for nav in self.navs:
                 sec.insert(nav)

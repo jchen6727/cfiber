@@ -13,50 +13,56 @@ cfg.cvode_active = True
 # cfg.printPopAvgRates = True
 
 # Recording 
-cfg.recordTraces = {'v00' : {'sec': 'axnperi', 'loc': 0.0, 'var': 'v'},
-                    'v02' : {'sec': 'axnperi', 'loc': 0.2, 'var': 'v'},
-                    'v04' : {'sec': 'axnperi', 'loc': 0.4, 'var': 'v'},
-                    'v06' : {'sec': 'axnperi', 'loc': 0.6, 'var': 'v'},
-                    'v08' : {'sec': 'axnperi', 'loc': 0.8, 'var': 'v'},
-                    'v10' : {'sec': 'axnperi', 'loc': 1.0, 'var': 'v'}}
+cfg.recordTraces = {#'v0' : {'sec': 'axnperi', 'loc': 0.0, 'var': 'v'},
+                    'v1' : {'sec': 'axnperi', 'loc': 0.1, 'var': 'v'},
+                    #'v2' : {'sec': 'axnperi', 'loc': 0.2, 'var': 'v'},
+                    'v3' : {'sec': 'axnperi', 'loc': 0.3, 'var': 'v'},
+                    #'v4' : {'sec': 'axnperi', 'loc': 0.4, 'var': 'v'},
+                    'v5' : {'sec': 'axnperi', 'loc': 0.5, 'var': 'v'},
+                    #'v6' : {'sec': 'axnperi', 'loc': 0.6, 'var': 'v'},
+                    'v7' : {'sec': 'axnperi', 'loc': 0.7, 'var': 'v'},
+                    #'v8' : {'sec': 'axnperi', 'loc': 0.8, 'var': 'v'},
+                    'v9' : {'sec': 'axnperi', 'loc': 0.9, 'var': 'v'}}
+                    #'v10': {'sec': 'axnperi', 'loc': 1.0, 'var': 'v'}}
 
-#cfg.recordTraces = {'ina17': {'sec': 'axnperi', 'loc': 0.5, 'var': 'ina_nav17'},
-#                    'ina18': {'sec': 'axnperi', 'loc': 0.5, 'var': 'ina_na18a'}}
+#cfg.recordTraces = {'v01' : {'sec': 'axnperi', 'loc': 0.1, 'var': 'v'},
+#                    'v03' : {'sec': 'axnperi', 'loc': 0.3, 'var': 'v'},
+#                    'v05' : {'sec': 'axnperi', 'loc': 0.5, 'var': 'v'},
+#                    'v07' : {'sec': 'axnperi', 'loc': 0.7, 'var': 'v'},
+#                    'v09' : {'sec': 'axnperi', 'loc': 0.9, 'var': 'v'}}
 
-#                    'gna_17': {'sec': 'axnperi', 'loc': 0.5, 'var': 'gna_na17a'},
-#                    'gna_18': {'sec': 'axnperi', 'loc': 0.5, 'var': 'gna_na18a'},
-#                    'gna_19': {'sec': 'axnperi', 'loc': 0.5, 'var': 'gna_na19a'}}
+#cfg.recordTraces = {'ina17': {'sec': 'axnperi', 'loc': 0.3, 'var': 'ina_nav17'}}
+#cfg.recordTraces = {'ina18': {'sec': 'axnperi', 'loc': 0.3, 'var': 'ina_na18a'}}
 
-#cfg.recordTraces = {'V_peri_0.0': {'sec': 'axnperi', 'loc': 0.0, 'var': 'v'},
-#                    'V_peri_0.5': {'sec': 'axnperi', 'loc': 0.5, 'var': 'v'},
-#                    'V_peri_1.0': {'sec': 'axnperi', 'loc': 1.0, 'var': 'v'},
-#                    'V_cntr_0.0': {'sec': 'axncntr', 'loc': 0.0, 'var': 'v'},
-#                    'V_cntr_0.5': {'sec': 'axncntr', 'loc': 0.5, 'var': 'v'},
-#                    'V_cntr_1.0': {'sec': 'axncntr', 'loc': 1.0, 'var': 'v'}}
+#cfg.recordTraces = { 'v03' : {'sec': 'axnperi', 'loc': 0.3, 'var': 'v'} }
+
 cfg.recordStims = False  
 cfg.recordStep = 0.05 
 
 # Saving
 cfg.simLabel = 'sim1'
 cfg.saveFolder = 'data'
-cfg.savePickle = False
+#cfg.savePickle = True
 cfg.saveJson = True
 cfg.saveDataInclude = ['simData', 'simConfig', 'netParams', 'net']
 
 # Analysis and plotting 
 cfg.analysis.plotTraces = Dict({'include': ['cfiber'], 'overlay': True, 'oneFigPer': 'cell', 'saveFig': True, 
-                             'showFig': False, 'timeRange': [0,cfg.duration]})
+                             'showFig': False, 'timeRange': [0, 1000]})
 
 # Parameters
 #cfg.gna17 = 0.0057
 #cfg.gna18 = 0.013
 
-cfg.gna17 = 0.01066
-cfg.gna18 = 0.02427
+#cfg.gna17 = 0.01066
+#cfg.gna18 = 0.02427
+
+cfg.gna17 = 0.02427
+cfg.gna18 = 0.01066
 cfg.cndct = [ 0.85, 0.85 ]
 #cfg.cndct = [ 1.75, 1.75 ]
 
-cfg.delay = [ 150, 400 ]
+cfg.delay = [ 100, 200, 300, 400, 500, 600, 700, 800, 900  ]
 
 #cfg.navs = {'na17a': cfg.gnaT * cfg.na17r * cfg.na17o, 'na18a': cfg.gnaT * cfg.na18o}
 # * 10 too much for gnabar17
