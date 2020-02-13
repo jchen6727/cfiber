@@ -4,9 +4,9 @@ from netpyne.specs import Dict, ODict
 cfg = specs.SimConfig()  
 
 # Run parameters
-cfg.duration = 1000
+cfg.duration = 200
 #cfg.dt = 0.01
-cfg.hParams = {'celsius': 37, 'v_init': -60}
+cfg.hParams = {'celsius': 37, 'v_init': -57}
 
 cfg.cvode_active = True
 # cfg.printRunTime = 0.1
@@ -22,8 +22,9 @@ cfg.recordTraces = {#'v0' : {'sec': 'axnperi', 'loc': 0.0, 'var': 'v'},
                     #'v6' : {'sec': 'axnperi', 'loc': 0.6, 'var': 'v'},
                     'v7' : {'sec': 'axnperi', 'loc': 0.7, 'var': 'v'},
                     #'v8' : {'sec': 'axnperi', 'loc': 0.8, 'var': 'v'},
-                    'v9' : {'sec': 'axnperi', 'loc': 0.9, 'var': 'v'}}
+                    'v9' : {'sec': 'axnperi', 'loc': 0.9, 'var': 'v'},
                     #'v10': {'sec': 'axnperi', 'loc': 1.0, 'var': 'v'}}
+                    'vs' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'v'}}
 
 #cfg.recordTraces = {'v01' : {'sec': 'axnperi', 'loc': 0.1, 'var': 'v'},
 #                    'v03' : {'sec': 'axnperi', 'loc': 0.3, 'var': 'v'},
@@ -42,13 +43,13 @@ cfg.recordStep = 0.05
 # Saving
 cfg.simLabel = 'sim1'
 cfg.saveFolder = 'data'
-#cfg.savePickle = True
+cfg.savePickle = False
 cfg.saveJson = True
 cfg.saveDataInclude = ['simData', 'simConfig', 'netParams', 'net']
 
 # Analysis and plotting 
 cfg.analysis.plotTraces = Dict({'include': ['cfiber'], 'overlay': True, 'oneFigPer': 'cell', 'saveFig': True, 
-                             'showFig': False, 'timeRange': [0, 1000]})
+                             'showFig': False, 'timeRange': [100, 150]})
 
 # Parameters
 #cfg.gna17 = 0.0057
@@ -57,12 +58,23 @@ cfg.analysis.plotTraces = Dict({'include': ['cfiber'], 'overlay': True, 'oneFigP
 #cfg.gna17 = 0.01066
 #cfg.gna18 = 0.02427
 
-cfg.gna17 = 0.02427
-cfg.gna18 = 0.01066
-cfg.cndct = [ 0.85, 0.85 ]
-#cfg.cndct = [ 1.75, 1.75 ]
+cfg.vrest = cfg.hParams['v_init']
 
-cfg.delay = [ 100, 200, 300, 400, 500, 600, 700, 800, 900  ]
+cfg.gna17 = 0.1
+cfg.gna18 = 0.3
+cfg.cndct = [ 0.25 , 0.25 ]
+
+gkscale =  4
+cfg.gk4 =  0.012     * gkscale
+cfg.gk2 =  0.0024    * gkscale
+cfg.gk1 =  0.000072  * gkscale
+
+
+cfg.ena =  65
+cfg.ek  =  -80
+
+cfg.gm  = 1/10000
+cfg.delay = [ 100 ]#s, 200, 300, 400, 500, 600, 700, 800, 900  ]
 
 #cfg.navs = {'na17a': cfg.gnaT * cfg.na17r * cfg.na17o, 'na18a': cfg.gnaT * cfg.na18o}
 # * 10 too much for gnabar17

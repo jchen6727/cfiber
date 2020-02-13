@@ -6,17 +6,26 @@ contains only the peripheral nerve fiber for simulation of NaV channel effects o
 from neuron import h
 
 class cfiber():
-    secs = {'axnperi': {'nseg':100, 'L':5000, 'diam': 1  }}
-    # 100 segments, 1 mm x 1 um, 100000 micron length (100 mm) 1 micron diameter
+    secs = {'axnperi': {'nseg':500, 'L':500,  'diam': 0.8 },
+            'axncntr': {'nseg':1  , 'L':10 ,  'diam': 0.4 },
+            'drgperi': {'nseg':100, 'L':100,  'diam': 0.8 },
+            'drgcntr': {'nseg':100, 'L':100,  'diam': 0.4 },
+            'drgstem': {'nseg':50 , 'L':75,   'diam': 1.4 },
+            'drgsoma': {'nseg':1  , 'L':25,   'diam': 25  }}
+    # 100 segments, 0.5 mm x 0.8 um
 
     def __init__(self,x=0,y=0,z=0,ID=0, 
                  navs = {'na17a': 0.04/6, 'na18a': 0.12/6, 'na19a': 0.08/6  }, 
                  kvs  = {'kv4'  : 0.01  , 'kv2'  : 0.002 , 'kv1'  : 0.00006 },
                  ena  = 70,
                  ek   = -70,
+                 vrest= -57,
+                 gm   = 1/10000,
                  rmut = 0.5):
-        self.regions = {'all': [], 'axn': []}
+        self.regions = {'all': [], 'axn': [], 'drg': [], 'soma': []}
         
+        self.vrest = vrest
+
         self.navs = navs # sodium channel dictionary
         self.ena  = ena  # Nernst of sodium
 
@@ -26,10 +35,12 @@ class cfiber():
         self.emut = (ena + ek) / 2 # mutated reversal in between sodium and potassium channel
         self.rmut = rmut           # percent mutation RNA
 
+        self.gm = gm
+
         self.set_morphology()
         self.insert_conductances()
         
-#        self.connect_secs()
+        self.connect_secs()
         self.initialize_values()
 
     def add_comp(self, sec, *regions):
@@ -39,8 +50,12 @@ class cfiber():
 
     def set_morphology(self):
 
-        for sec in ['axnperi']:
+        for sec in ['axnperi', 'axncntr', 'drgperi', 'drgcntr', 'drgstem']:
             self.add_comp(sec, sec[0:3], 'all')
+            self.set_geom(sec)
+
+        for sec in ['drgsoma']:
+            self.add_comp(sec, 'drg', 'soma', 'all')
             self.set_geom(sec)
 
     def set_geom(self, sec):
@@ -50,7 +65,7 @@ class cfiber():
 
     def insert_conductances (self):
         
-        for sec in self.regions['axn']:
+        for sec in self.regions['all']:
             sec.Ra    = 1000
             
             for nav in self.navs:
@@ -68,13 +83,22 @@ class cfiber():
             sec.ek  = self.ek
 
             sec.insert('pas')
-            sec.g_pas = 1/10000
+            sec.g_pas = self.gm
             ##sec.e_pas = -60
+
+    def connect_secs(self):
+        self.drgperi.connect(self.axnperi)
+        self.drgstem.connect(self.drgperi)
+        self.drgsoma.connect(self.drgstem)
+        self.drgcntr.connect(self.drgperi)
+        #self.axncntr.connect(self.drgcntr)
 
     def initialize_values(self):
         #sets passive current to allow for steady state voltage.
         for i, sec in enumerate(self.regions['all']):
-            h.finitialize(-60)
+            h.finitialize(self.vrest)
             h.fcurrent()
+            ##sec.g_pas = sec.v + (sec.ina + sec.ik) / sec.e_pas
             sec.e_pas = sec.v + (sec.ina + sec.ik) / sec.g_pas
+            ##print( "e_pas: %f" %(sec.e_pas) )
             print( "e_pas: %f" %(sec.e_pas) )
