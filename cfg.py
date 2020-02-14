@@ -6,13 +6,14 @@ cfg = specs.SimConfig()
 # Run parameters
 cfg.duration = 200
 #cfg.dt = 0.01
-cfg.hParams = {'celsius': 37, 'v_init': -57}
+cfg.hParams = {'celsius': 22, 'v_init': -57}
 
 cfg.cvode_active = True
 # cfg.printRunTime = 0.1
 # cfg.printPopAvgRates = True
 
-# Recording 
+# Recording
+
 cfg.recordTraces = {#'v0' : {'sec': 'axnperi', 'loc': 0.0, 'var': 'v'},
                     'v1' : {'sec': 'axnperi', 'loc': 0.1, 'var': 'v'},
                     #'v2' : {'sec': 'axnperi', 'loc': 0.2, 'var': 'v'},
@@ -26,14 +27,9 @@ cfg.recordTraces = {#'v0' : {'sec': 'axnperi', 'loc': 0.0, 'var': 'v'},
                     #'v10': {'sec': 'axnperi', 'loc': 1.0, 'var': 'v'}}
                     'vs' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'v'}}
 
-#cfg.recordTraces = {'v01' : {'sec': 'axnperi', 'loc': 0.1, 'var': 'v'},
-#                    'v03' : {'sec': 'axnperi', 'loc': 0.3, 'var': 'v'},
-#                    'v05' : {'sec': 'axnperi', 'loc': 0.5, 'var': 'v'},
-#                    'v07' : {'sec': 'axnperi', 'loc': 0.7, 'var': 'v'},
-#                    'v09' : {'sec': 'axnperi', 'loc': 0.9, 'var': 'v'}}
 
-#cfg.recordTraces = {'ina17': {'sec': 'axnperi', 'loc': 0.3, 'var': 'ina_nav17'}}
-#cfg.recordTraces = {'ina18': {'sec': 'axnperi', 'loc': 0.3, 'var': 'ina_na18a'}}
+#cfg.recordTraces = {'ina17': {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ina_nav17'},
+#                    'ina18': {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ina_na18a'}}
 
 #cfg.recordTraces = { 'v03' : {'sec': 'axnperi', 'loc': 0.3, 'var': 'v'} }
 
@@ -48,8 +44,8 @@ cfg.saveJson = True
 cfg.saveDataInclude = ['simData', 'simConfig', 'netParams', 'net']
 
 # Analysis and plotting 
-cfg.analysis.plotTraces = Dict({'include': ['cfiber'], 'overlay': True, 'oneFigPer': 'cell', 'saveFig': True, 
-                             'showFig': False, 'timeRange': [100, 150]})
+cfg.analysis.plotTraces = Dict({'include': ['cnrn'], 'overlay': True, 'oneFigPer': 'cell', 'saveFig': True, 
+                             'showFig': False, 'timeRange': [99, 111]})
 
 # Parameters
 #cfg.gna17 = 0.0057
@@ -60,18 +56,24 @@ cfg.analysis.plotTraces = Dict({'include': ['cfiber'], 'overlay': True, 'oneFigP
 
 cfg.vrest = cfg.hParams['v_init']
 
-cfg.gna17 = 0.1
-cfg.gna18 = 0.3
-cfg.cndct = [ 0.25 , 0.25 ]
+#cfg.gna17 = 0.01
+#cfg.gna18 = 0.03
+#cfg.cndct = [ 1.5 , 0.5 ]
 
-gkscale =  4
-cfg.gk4 =  0.012     * gkscale
-cfg.gk2 =  0.0024    * gkscale
-cfg.gk1 =  0.000072  * gkscale
+cfg.gna17 = 0.8
+cfg.gna18 = 0.6
+
+cfg.cndct = [ 1 , 1]
+
+gkscale =  1
+cfg.gk7 =  0.00002       * gkscale
+cfg.gk4 =  0.00002       * gkscale
+cfg.gk2 =  1.4           * gkscale
+#cfg.gk1 =  0.000072  * gkscale
 
 
-cfg.ena =  65
-cfg.ek  =  -80
+cfg.ena =  70
+cfg.ek  =  -70
 
 cfg.gm  = 1/10000
 cfg.delay = [ 100 ]#s, 200, 300, 400, 500, 600, 700, 800, 900  ]

@@ -14,7 +14,7 @@ UNITS {
 PARAMETER {
 	gkbar = 1	(S/cm2)
 	celsius		(degC)
-	Cq10 = 3
+	Cq10 = 2.5
 
 
 	a0 = 100.74	(1/ms)

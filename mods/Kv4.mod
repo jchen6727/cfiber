@@ -58,7 +58,7 @@ UNITS {
 }
 
 CONSTANT {
-	q10 = 3
+	q10 = 2.5
 
 	can = 0.15743 (1/ms)
 	cvan = 57 (mV)
