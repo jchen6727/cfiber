@@ -74,6 +74,7 @@ class csoma():
 
             sec.insert('pas')
             sec.g_pas = self.gm
+            sec.e_pas = self.vrest
             ##sec.e_pas = -60
 
     def connect_secs(self):
@@ -82,11 +83,25 @@ class csoma():
 
 
     def initialize_values(self):
-        #sets passive current to allow for steady state voltage.
+
         for i, sec in enumerate(self.regions['all']):
             h.finitialize(self.vrest)
             h.fcurrent()
-            ##sec.g_pas = sec.v + (sec.ina + sec.ik) / sec.e_pas
+            for nav in self.navs:
+                exestr = "print( \"ina_" + nav + ": %f\" %(sec.ina_" + nav + "))"   
+                exec(exestr)
+
+            for kv in self.kvs:
+                exestr = "print( \"ik_"  + kv + " : %f\" %(sec.ik_"  + kv + "))"
+                exec(exestr)
+            
             sec.e_pas = sec.v + (sec.ina + sec.ik) / sec.g_pas
-            ##print( "e_pas: %f" %(sec.e_pas) )
-            print( "e_pas: %f" %(sec.e_pas) )
+
+        ##sets passive current to allow for steady state voltage.
+        #for i, sec in enumerate(self.regions['all']):
+        #    h.finitialize(self.vrest)
+        #    h.fcurrent()
+        #    ##sec.g_pas = sec.v + (sec.ina + sec.ik) / sec.e_pas
+        #    sec.e_pas = sec.v + (sec.ina + sec.ik) / sec.g_pas
+        #    ##print( "e_pas: %f" %(sec.e_pas) )
+        #    print( "e_pas: %f" %(sec.e_pas) )

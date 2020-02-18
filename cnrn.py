@@ -84,7 +84,9 @@ class cnrn():
 
             sec.insert('pas')
             sec.g_pas = self.gm
-            ##sec.e_pas = -60
+            sec.e_pas = self.vrest
+
+
 
     def connect_secs(self):
         self.drgperi.connect(self.axnperi)
@@ -94,11 +96,25 @@ class cnrn():
         self.axncntr.connect(self.drgcntr)
 
     def initialize_values(self):
-        #sets passive current to allow for steady state voltage.
+        
         for i, sec in enumerate(self.regions['all']):
             h.finitialize(self.vrest)
             h.fcurrent()
-            ##sec.g_pas = sec.v + (sec.ina + sec.ik) / sec.e_pas
-            sec.e_pas = sec.v + (sec.ina + sec.ik) / sec.g_pas
-            ##print( "e_pas: %f" %(sec.e_pas) )
-            print( "e_pas: %f" %(sec.e_pas) )
+            for nav in self.navs:
+                exestr = "print( \"ina_" + nav + ": %f\" %(sec.ina_" + nav + "))"   
+                exec(exestr)
+
+            for kv in self.kvs:
+                exestr = "print( \"ik_"  + kv + " : %f\" %(sec.ik_"  + kv + "))"
+                exec(exestr)
+
+            #sec.e_pas = sec.v + (sec.ina + sec.ik) / sec.g_pas
+            #print("e_pas: %f" %sec.e_pas)   
+        ##sets passive current to allow for steady state voltage.
+        #for i, sec in enumerate(self.regions['all']):
+        #    h.finitialize(self.vrest)
+        #    h.fcurrent()
+        #    ##sec.g_pas = sec.v + (sec.ina + sec.ik) / sec.e_pas
+        #    sec.e_pas = sec.v + (sec.ina + sec.ik) / sec.g_pas
+        #    ##print( "e_pas: %f" %(sec.e_pas) )
+        #    print( "e_pas: %f" %(sec.e_pas) )
