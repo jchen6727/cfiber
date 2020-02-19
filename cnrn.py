@@ -35,6 +35,8 @@ class cnrn():
         self.kvs  = kvs  # potassium channel dictionary
         self.ek   = ek   # Nernst of potassium
 
+        self.cavs = cavs
+
         self.emut = (ena + ek) / 2 # mutated reversal in between sodium and potassium channel
         self.rmut = rmut           # percent mutation RNA
 

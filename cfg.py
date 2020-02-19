@@ -4,7 +4,7 @@ from netpyne.specs import Dict, ODict
 cfg = specs.SimConfig()  
 
 # Run parameters
-cfg.duration = 600
+cfg.duration = 50
 #cfg.dt = 0.01
 cfg.hParams = {'celsius': 22, 'v_init': -55}
 
@@ -23,7 +23,7 @@ cfg.recordTraces = {#'v0' : {'sec': 'axnperi', 'loc': 0.0, 'var': 'v'},
                     #'v6' : {'sec': 'axnperi', 'loc': 0.6, 'var': 'v'},
                     'v7' : {'sec': 'axnperi', 'loc': 0.7, 'var': 'v'},
                     #'v8' : {'sec': 'axnperi', 'loc': 0.8, 'var': 'v'},
-                    'v9' : {'sec': 'axnperi', 'loc': 0.9, 'var': 'v'},}
+                    'v9' : {'sec': 'axnperi', 'loc': 0.9, 'var': 'v'},
                     #'v10': {'sec': 'axnperi', 'loc': 1.0, 'var': 'v'}}
                     'vs' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'v'}}
 
@@ -68,28 +68,28 @@ cfg.nseg  = 11
 
 cfg.gna17 = 0.8
 cfg.gna18 = 0.6
-
-cfg.gna19 = 0.09
+cfg.gna19 = 0.025
 cfg.nacndct = [ 1.0 ] * 3
 
 #cfg.nacndct = [ 0.5 , 0.5 , 1 ]
 
-cfg.gk1 = 0.1
-cfg.gk2 = 1.6
-cfg.gk3 = 0.05
-cfg.gk4 = 0.0175
-cfg.gk7 = 0.0375
+cfg.gk1 = 0.465
+cfg.gk2 = 3.9
+cfg.gk3 = 0.24
+cfg.gk4 = 0.0877
+cfg.gk7 = 0.006
 
 cfg.kcndct  = [ 1.0] * 5
 #cfg.gk1 =  0.000072  * gkscale
 
+cfg.gca = 0
 
 cfg.ena =  70
-cfg.ek  =  -80
+cfg.ek  =  -70
 cfg.rmut = 0.0
 
 cfg.gm  = 0.0001
-cfg.delay = [ 100, 200, 300, 400, 500 ]#, 100, 200, 300, 400, 500]#s, 200, 300, 400, 500, 600, 700, 800, 900  ]
+cfg.delay = [ 20] #, 200, 300, 400, 500 ]#, 100, 200, 300, 400, 500]#s, 200, 300, 400, 500, 600, 700, 800, 900  ]
 
 #cfg.navs = {'na17a': cfg.gnaT * cfg.na17r * cfg.na17o, 'na18a': cfg.gnaT * cfg.na18o}
 # * 10 too much for gnabar17

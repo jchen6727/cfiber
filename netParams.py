@@ -25,13 +25,13 @@ kvs  = {'kv1'  : cfg.gk1   * cfg.kcndct[0] ,
 #kvs  = {'borgkdr' : cfg.gk1   * cfg.kcndct[0] ,
 #        'kv7'     : cfg.gk7   * cfg.kcndct[4] }
 
-cal  = {'cal'  : cfg.gcal }
+cavs = {'cal'  : cfg.gca }
 
-args = {'navs' : navs,      'kvs': kvs, 
+args = {'navs' : navs,      'kvs': kvs,         'cavs': cavs,          
         'ena'  : cfg.ena,   'ek': cfg.ek, 
         'vrest': cfg.vrest, 'gm': cfg.gm, 
         'rmut' : cfg.rmut,
-        'L'    : cfg.L      'nseg': cfg.nseg} 
+        'L'    : cfg.L,     'nseg': cfg.nseg} 
 cnrnParams  = netParams.importCellParams(label='cnrn' , conds={'cellType': 'cnrn' }, fileName='cnrn.py' , cellName='cnrn' , cellArgs=args)
 #cdrgParams  = netParams.importCellParams(label='cdrg' , conds={'cellType': 'cdrg' }, fileName='cdrg.py' , cellName='cdrg' , cellArgs=args)
 #csomaParams = netParams.importCellParams(label='csoma', conds={'cellType': 'csoma'}, fileName='csoma.py', cellName='csoma', cellArgs=args)
