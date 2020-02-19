@@ -7,8 +7,8 @@ from neuron import h
 
 class cnrn():
     secs = {'axnperi': {'nseg':301, 'L':10000,'diam': 0.8 },
-            'drgperi': {'nseg':31 , 'L':100,  'diam': 0.8 },
-            'drgstem': {'nseg':25 , 'L':75,   'diam': 1.4 },
+            'drgperi': {'nseg':101 , 'L':100,  'diam': 0.8 },
+            'drgstem': {'nseg':101 , 'L':75,   'diam': 1.4 },
             'drgsoma': {'nseg':1  , 'L':25,   'diam': 25  },
             'drgcntr': {'nseg':31 , 'L':100,  'diam': 0.4 },
             'axncntr': {'nseg':1  , 'L':10,   'diam': 0.4 }}
@@ -66,7 +66,7 @@ class cnrn():
 
             self.__dict__[sec].diam = cnrn.secs[sec]['diam']
 
-        for sec in ['axnperi', 'axncntr', 'drgperi', 'drgcntr', 'drgstem']:
+        for sec in ['axncntr', 'drgperi', 'drgcntr', 'drgstem']:
             self.add_comp(sec, sec[0:3], 'all')
             self.set_geom(sec)
 
@@ -107,7 +107,7 @@ class cnrn():
             sec.e_pas = self.vrest
 
 
-        # half channel density at soma -- if necessary
+        #half channel density at soma -- if necessary
         for sec in self.regions['soma']:
             exestr = "sec.gnabar_%s = self.navs[nav]/2" %(nav)
 

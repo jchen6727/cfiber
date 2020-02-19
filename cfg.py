@@ -6,14 +6,14 @@ cfg = specs.SimConfig()
 # Run parameters
 cfg.duration = 50
 #cfg.dt = 0.01
-cfg.hParams = {'celsius': 22, 'v_init': -55}
+cfg.hParams = {'celsius': 22, 'v_init': -57}
 
 cfg.cvode_active = True
 # cfg.printRunTime = 0.1
 # cfg.printPopAvgRates = True
 
 # Recording
-
+"""
 cfg.recordTraces = {#'v0' : {'sec': 'axnperi', 'loc': 0.0, 'var': 'v'},
                     'v1' : {'sec': 'axnperi', 'loc': 0.1, 'var': 'v'},
                     #'v2' : {'sec': 'axnperi', 'loc': 0.2, 'var': 'v'},
@@ -25,7 +25,17 @@ cfg.recordTraces = {#'v0' : {'sec': 'axnperi', 'loc': 0.0, 'var': 'v'},
                     #'v8' : {'sec': 'axnperi', 'loc': 0.8, 'var': 'v'},
                     'v9' : {'sec': 'axnperi', 'loc': 0.9, 'var': 'v'},
                     #'v10': {'sec': 'axnperi', 'loc': 1.0, 'var': 'v'}}
-                    'vs' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'v'}}
+                    'vs' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'v'},
+                    'vc' : {'sec': 'axncntr', 'loc': 0.5, 'var': 'v'}}
+"""
+cfg.recordTraces = {'in7' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ina_nav17'},
+                    'in8' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ina_na18a'},
+                    'in9' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ina_na19a'},
+                    'ik1' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ik_kv1'   },
+                    'ik2' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ik_kv2'   },
+                    'ik3' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ik_kv3'   },
+                    'ik4' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ik_kv4'   },
+                    'ik7' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ik_kv7'   }}
 
 #cfg.recordTraces = {'vs' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'v'}}
 
@@ -63,26 +73,30 @@ cfg.vrest = cfg.hParams['v_init']
 
 #length of the peripheral axon
 cfg.L     = 100
-cfg.nseg  = 11
+cfg.nseg  = 101
 
 
+#cfg.gna17 = 0.8
+#cfg.gna18 = 0.6
 cfg.gna17 = 0.8
 cfg.gna18 = 0.6
 cfg.gna19 = 0.025
-cfg.nacndct = [ 1.0 ] * 3
+cfg.nacndct = [ 1 , 1 , 1.0 ]
 
 #cfg.nacndct = [ 0.5 , 0.5 , 1 ]
 
-cfg.gk1 = 0.465
-cfg.gk2 = 3.9
-cfg.gk3 = 0.24
-cfg.gk4 = 0.0877
+cfg.gk1 = 0.30225
+cfg.gk2 = 2.34
+cfg.gk3 = 0.192
+cfg.gk4 = 0.06139
 cfg.gk7 = 0.006
 
-cfg.kcndct  = [ 1.0] * 5
+cfg.kcndct  = [ 1, 1, 1 , 1, 1 ]
+
+#cfg.kcndct  = [ 0.65 , 0.60, 0.80, 0.65, 1]
 #cfg.gk1 =  0.000072  * gkscale
 
-cfg.gca = 0
+cfg.gca = 1.4
 
 cfg.ena =  70
 cfg.ek  =  -70
