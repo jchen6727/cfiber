@@ -6,22 +6,25 @@ including peripheral fiber, drg with soma, central fiber
 from neuron import h
 
 class cnrn():
-    secs = {'axnperi': {'nseg':500, 'L':500,  'diam': 0.8 },
-            'drgperi': {'nseg':100, 'L':100,  'diam': 0.8 },
-            'drgstem': {'nseg':50 , 'L':75,   'diam': 1.4 },
+    secs = {'axnperi': {'nseg':301, 'L':10000,'diam': 0.8 },
+            'drgperi': {'nseg':31 , 'L':100,  'diam': 0.8 },
+            'drgstem': {'nseg':25 , 'L':75,   'diam': 1.4 },
             'drgsoma': {'nseg':1  , 'L':25,   'diam': 25  },
-            'drgcntr': {'nseg':100, 'L':100,  'diam': 0.4 },
-            'axncntr': {'nseg':1  , 'L':10 ,  'diam': 0.4 }}
+            'drgcntr': {'nseg':31 , 'L':100,  'diam': 0.4 },
+            'axncntr': {'nseg':1  , 'L':10,   'diam': 0.4 }}
     # 100 segments, 0.5 mm x 0.8 um
 
     def __init__(self,x=0,y=0,z=0,ID=0, 
                  navs = { 'na17a': 1},   #{'na17a': 0.04/6, 'na18a': 0.12/6, 'na19a': 0.08/6  }, 
                  kvs  = { 'kv4'  : 1},   #{'kv4'  : 0.01  , 'kv2'  : 0.002 , 'kv1'  : 0.00006 },
+                 cavs = { 'cal'  : 1},
                  ena  = 70,
                  ek   = -70,
                  vrest= -57,
                  gm   = 1/10000,
-                 rmut = 0.5):
+                 rmut = 0.0,
+                 L    = 100,
+                 nseg = 101):
         self.regions = {'all': [], 'axn': [], 'drg': [], 'soma': []}
         
         self.vrest = vrest
@@ -37,6 +40,9 @@ class cnrn():
 
         self.gm = gm
 
+        self.L = L
+        self.nseg = nseg
+
         self.set_morphology()
         self.insert_conductances()
         
@@ -49,6 +55,14 @@ class cnrn():
             self.regions[region].append(self.__dict__[sec])
 
     def set_morphology(self):
+        
+        for sec in ['axnperi']:
+
+            self.add_comp(sec, sec[0:3], 'all')
+            self.__dict__[sec].nseg = self.nseg
+            self.__dict__[sec].L    = self.L
+
+            self.__dict__[sec].diam = cnrn.secs[sec]['diam']
 
         for sec in ['axnperi', 'axncntr', 'drgperi', 'drgcntr', 'drgstem']:
             self.add_comp(sec, sec[0:3], 'all')
@@ -82,10 +96,18 @@ class cnrn():
 
             sec.ek  = self.ek
 
+            for cav in self.cavs:
+                sec.insert(cav)
+                exestr = "sec.gcabar_%s = self.cavs[cav]" %(cav)
+
             sec.insert('pas')
             sec.g_pas = self.gm
             sec.e_pas = self.vrest
 
+
+        # half channel density at soma -- if necessary
+        for sec in self.regions['soma']:
+            exestr = "sec.gnabar_%s = self.navs[nav]/2" %(nav)
 
 
     def connect_secs(self):
@@ -108,6 +130,12 @@ class cnrn():
                 exestr = "print( \"ik_"  + kv + " : %f\" %(sec.ik_"  + kv + "))"
                 exec(exestr)
 
+            for cav in self.cavs:
+                exestr = "print( \"ica_"  + cav + " : %f\" %(sec.ica_"  + cav + "))"
+                exec(exestr)
+
+
+        
             #sec.e_pas = sec.v + (sec.ina + sec.ik) / sec.g_pas
             #print("e_pas: %f" %sec.e_pas)   
         ##sets passive current to allow for steady state voltage.

@@ -9,8 +9,10 @@ params = specs.ODict()
 
 #good target -- 0.013 -> 0.014
 
-params['kcndct'] = [ [x, 1, 1] for x in np.linspace(1.5, 2.5, 11)]
-#params['block'] = [ [0, 1], [1, 1], [1, 0] ]
+#params['gk1'] = [ 0.1    * x for x in [0.5, 1, 1.5, 2] ]
+#params['gk2'] = [ 1.6    * x for x in [0.5, 1, 1.5, 2] ]
+#params['gk3'] = [ 0.05   * x for x in [0.5, 1, 1.5, 2] ]
+#params['gk4'] = [ 0.0175 * x for x in [0.5, 1, 1.5, 2] ]
 
 b = Batch(params = params, cfgFile = 'cfg.py', netParamsFile = 'netParams.py')
 

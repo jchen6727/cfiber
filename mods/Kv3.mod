@@ -1,78 +1,123 @@
-: Kv3 channel
+TITLE Voltage-gated potassium channel from Kv3 subunits
 
-UNITS {
-    (mV) = (millivolt)
-    (mA) = (milliamp)
-    (S) = (siemens)
-}
+COMMENT
+Voltage-gated potassium channel with high threshold and fast activation/deactivation kinetics
+
+KINETIC SCHEME: Hodgkin-Huxley (n^4)
+n'= alpha * (1-n) - betha * n
+g(v) = gbar * n^4 * ( v-ek )
+
+The rate constants of activation (alpha) and deactivation (beta) were approximated by:
+
+alpha(v) = ca * exp(-(v+cva)/cka)
+beta(v) = cb * exp(-(v+cvb)/ckb)
+
+Parameters can, cvan, ckan, cbn, cvbn, ckbn are given in the CONSTANT block.
+Values derive from least-square fits to experimental data of G/Gmax(v) and taun(v) in Martina et al. J Neurophys. 97 (563-671, 2007.
+Model includes a calculation of Kv gating current
+
+Reference: Akemann et al., Biophys. J. (2009) 96: 3959-3976
+
+Laboratory for Neuronal Circuit Dynamics
+RIKEN Brain Science Institute, Wako City, Japan
+http://www.neurodynamics.brain.riken.jp
+
+Date of Implementation: April 2007
+Contact: akemann@brain.riken.jp
+
+ENDCOMMENT
+
 
 NEURON {
-    SUFFIX kv3
-    USEION k READ ek WRITE ik
-    RANGE gkbar, gk, ik
-    GLOBAL vhninf, kninf, antaul, bntaul, cntaul, dntaul, antaur, bntaur, cntaur,dntaur, brkvntau
+	SUFFIX kv3
+	USEION k READ ek WRITE ik
+	RANGE gkbar, gk, ik
+	RANGE ninf, tau
 }
 
-PARAMETER{ 
-    gkbar = 0.004 (S/cm2)
-    ek = -88 (mV)
-    vhninf = -15
-    kninf = 8
-    antaul = 1
-    bntaul = 15
-    cntaul = -50
-    dntaul = 10
-    brkvntau = -20
-    antaur = 0.15
-    bntaur = 10
-    cntaur = -10
-    dntaur = 6
+UNITS {
+	(mV) = (millivolt)
+	(mA) = (milliamp)
+	(nA) = (nanoamp)
+	(pA) = (picoamp)
+	(S)  = (siemens)
+	(mS) = (millisiemens)
+	(nS) = (nanosiemens)
+	(pS) = (picosiemens)
+	(um) = (micron)
+	(molar) = (1/liter)
+	(mM) = (millimolar)		
 }
 
-ASSIGNED{
-    v (mV)
-    ik (mA/cm2)
-    gk (S/cm2)
-    ninf
-    ntau (ms) 
+CONSTANT {
+	e0 = 1.60217646e-19 (coulombs)
+	q10 = 2.7
+
+	ca = 0.22 (1/ms)
+	cva = 16 (mV)
+	cka = -26.5 (mV)
+	cb = 0.22 (1/ms)
+	cvb = 16 (mV)
+	ckb = 26.5 (mV)
+
 }
 
-STATE{
-    n
+PARAMETER {
+	
+	gkbar = 0.005 (S/cm2)   <0,1e9>
+
 }
 
-BREAKPOINT{
-    SOLVE states METHOD cnexp 
-    gk = gkbar * n^4
-    ik = gk * (v - ek)
+ASSIGNED {
+	celsius (degC)
+	v (mV)
+	
+	ik (mA/cm2)
+ 
+	ek (mV)
+	gk (S/cm2)
+
+	tadj (1)
+
+	ninf (1)
+	tau (ms)
+	alpha (1/ms)
+	beta (1/ms)
 }
 
-UNITSOFF
+STATE { n }
 
-INITIAL{
-    settables(v)
-    n = ninf
+INITIAL {
+	tadj = q10^((celsius-22 (degC))/10 (degC))
+	rateConst(v)
+	n = ninf
 }
 
-DERIVATIVE states{
-    settables(v)
-    n' = (ninf-n)/ntau
+BREAKPOINT {
+	SOLVE state METHOD cnexp
+    gk = gkbar * n^4 
+	ik = gk * (v - ek)
 }
 
-PROCEDURE settables(v (mV)){
-    TABLE ninf, ntau
-    FROM -100 TO 100 WITH 200    
-    
-    ninf = 1/(1+exp(-(v-vhninf)/kninf))
-    
-    if (v < brkvntau){
-         ntau = antaul+bntaul*exp(-((v-cntaul)/dntaul)^2)
-    }else{
-         ntau = antaur+bntaur*(1/(1+exp((v-cntaur)/dntaur)))
-    }
+DERIVATIVE state {
+	rateConst(v)
+	n' = alpha * (1-n) - beta * n
 }
 
-UNITSON
+PROCEDURE rateConst(v (mV)) {
+	alpha = alphaFkt(v)
+	beta = betaFkt(v)
+	ninf = alpha / (alpha + beta) 
+	tau = 1 / ( (alpha + beta) * tadj)
+}
+
+FUNCTION alphaFkt(v (mV)) (1/ms) {
+	alphaFkt = ca * exp(-(v+cva)/cka) 
+}
+
+FUNCTION betaFkt(v (mV)) (1/ms) {
+	betaFkt = cb * exp(-(v+cvb)/ckb)
+}
 
 
 

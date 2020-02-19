@@ -65,7 +65,7 @@ class cdrg():
     def insert_conductances (self):
         
         for sec in self.regions['all']:
-            sec.Ra    = 1000
+            sec.Ra    = 100
             
             for nav in self.navs:
                 sec.insert(nav)
