@@ -32,7 +32,7 @@ NEURON {
 	SUFFIX kv7
 	USEION k READ ek WRITE ik
         RANGE  gkbar,ik
-        RANGE  inf, tau, taua, taub
+        RANGE  inf, tau, taua, taub, q10
 }
 
 STATE {

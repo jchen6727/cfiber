@@ -31,7 +31,7 @@ ENDCOMMENT
 NEURON {
 	SUFFIX kv3
 	USEION k READ ek WRITE ik
-	RANGE gkbar, gk, ik
+	RANGE gkbar, gk, ik, q10
 	RANGE ninf, tau
 }
 
@@ -51,8 +51,6 @@ UNITS {
 
 CONSTANT {
 	e0 = 1.60217646e-19 (coulombs)
-	q10 = 2.7
-
 	ca = 0.22 (1/ms)
 	cva = 16 (mV)
 	cka = -26.5 (mV)
@@ -63,7 +61,7 @@ CONSTANT {
 }
 
 PARAMETER {
-	
+	q10 = 2.5
 	gkbar = 0.005 (S/cm2)   <0,1e9>
 
 }

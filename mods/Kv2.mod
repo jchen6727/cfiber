@@ -2,7 +2,7 @@ NEURON {
 	SUFFIX kv2
 	USEION k READ ek WRITE ik
 	RANGE gk, ik, an, bn, gkbar
-	RANGE a0, a1, ah, ac, b0, bc, Cq10
+	RANGE a0, a1, ah, ac, b0, bc, q10, tadg
 }
 
 UNITS {
@@ -14,7 +14,7 @@ UNITS {
 PARAMETER {
 	gkbar = 1	(S/cm2)
 	celsius		(degC)
-	Cq10 = 2.5
+	q10 = 2.5
 
 
 	a0 = 100.74	(1/ms)
@@ -42,6 +42,7 @@ ASSIGNED {
 	kb3	(1/ms)
 	kf4	(1/ms)
 	kb4	(1/ms)
+	tadj
 }
 
 STATE {
@@ -72,9 +73,9 @@ KINETIC kin{
 }
 
 PROCEDURE rates(v(mV)) {LOCAL q10
-	q10 = Cq10^((celsius-22 (degC))/10 (degC))
-	an = q10*(a0 - a1 *v)/(exp((ah+v)/ac) - 1)
-	bn = q10*(b0 )/(exp(v/bc))
+	tadj = q10^((celsius-22 (degC))/10 (degC))
+	an = tadj*(a0 - a1 *v)/(exp((ah+v)/ac) - 1)
+	bn = tadj*(b0 )/(exp(v/bc))
 
 	kf1 = 4*an
 	kb1 = bn

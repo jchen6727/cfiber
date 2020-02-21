@@ -117,7 +117,7 @@ STATE {
 
 
 INITIAL {
-	Q10 = 3^((celsius-20(degC))/10 (degC))
+	Q10 = 2^((celsius-20(degC))/10 (degC))
 	SOLVE kin
 	STEADYSTATE sparse
 }
