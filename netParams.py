@@ -55,7 +55,7 @@ for delay in cfg.delay:
 """
 for delay in cfg.delay:
     key = 'vc%i'%delay
-    netParams.stimSourceParams[key] = {'type': 'VClamp', 'dur': [delay, 50, 0], 'amp': [cfg.vrest, 10, cfg.vrest]}
+    netParams.stimSourceParams[key] = {'type': 'VClamp', 'dur': [delay, 50, 0], 'amp': [-57, 10, -57]}
     netParams.stimTargetParams[key] = {'source': key, 'conds': {'popLabel': 'cnrn'}, 'sec': 'drgsoma', 'loc': 0.5}
 """
 #key = 'vc%i'%delay

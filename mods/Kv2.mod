@@ -72,7 +72,7 @@ KINETIC kin{
 	CONSERVE c4+c3+c2+c1+o=1
 }
 
-PROCEDURE rates(v(mV)) {LOCAL q10
+PROCEDURE rates(v(mV)) {
 	tadj = q10^((celsius-22 (degC))/10 (degC))
 	an = tadj*(a0 - a1 *v)/(exp((ah+v)/ac) - 1)
 	bn = tadj*(b0 )/(exp(v/bc))
@@ -86,9 +86,3 @@ PROCEDURE rates(v(mV)) {LOCAL q10
 	kf4 = an
 	kb4 = 4*bn
 }
-
-
-
-
-
-
