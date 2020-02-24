@@ -105,15 +105,20 @@ PROCEDURE settables(v (mV)){
     mtau   = 1 / (malpha + mbeta) / tadj
     minf   = malpha / (malpha + mbeta)
 
-    halpha =  0.38685           / ( 1 + exp( (v + 122.35) /  15.29   ))
-    hbeta  = -0.00283 + 2.00283 / ( 1 + exp( (v + 5.5266) / -12.70195))
-    htau   = 1 / (halpha + hbeta) / tadj
-    hinf   = halpha / (halpha + hbeta)
+:    halpha =  0.38685           / ( 1 + exp( (v + 122.35) /  15.29   ))
+:    hbeta  = -0.00283 + 2.00283 / ( 1 + exp( (v + 5.5266) / -12.70195))
+    htau   = ( 1.218 + 42.043 · exp( - ( (v+38.1)^2 / (2 * 15.19^2) ) ) ) / tadj
+    hinf   = 1 / ( 1 + exp((v + 32.2)/4) )
 
-    salpha = 0.00003 + 0.00092 / ( 1 + exp( (v + 93.9 ) / 16.6))
-    sbeta  = 132.05  - 132.05  / ( 1 + exp( (v - 384.9) / 28.5))
+    salpha = 0.001 * 5.4203/(1 + exp((v + 79.816)/16.269))
+    sbeta  = 0.001 * 5.0757/(1 + exp( - ( v+15.968 )/11.542 ))
     stau   = 1 / (salpha + sbeta) / tadj
-    sinf   = salpha / (salpha + sbeta)
+    sinf   = 1 / ( 1 + exp((v + 45)/8) )
+
+    ualpha = 0.0002 * 2.0434/(1 + exp((v + 67.499)/19.51))
+    ubeta  = 0.0002 * 1.9952/(1 + exp(−(v + 30.963)/14.792))
+    utau   = 1 / (ualpha + ubeta) / tadj
+    uinf   = 1 / ( 1 + exp((v + 51)/8))
 }
 
 UNITSON
