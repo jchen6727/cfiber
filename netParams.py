@@ -10,11 +10,14 @@ netParams.popParams['cnrn']  = {'cellType': 'cnrn' , 'numCells': 1, 'cellModel':
 #netParams.popParams['csoma'] = {'cellType': 'csoma', 'numCells': 1, 'cellModel': '_csoma'}
 #calculate navs from config file
 #navs = {'nav17': cfg.gna17 * cfg.block[0], 'na18a': cfg.gna18 * cfg.block[1]}
-
+"""
 navs = {'nav17': cfg.gna17 * cfg.nacndct[0], 
         'na18a': cfg.gna18 * cfg.nacndct[1], 
         'na19a': cfg.gna19 * cfg.nacndct[2]}
-
+"""
+navs = {'nav17': cfg.gna17 * cfg.nacndct[0], 
+        'nav18': cfg.gna18 * cfg.nacndct[1], 
+        'na19a': cfg.gna19 * cfg.nacndct[2]}
 # more complex potassium channel config, not very useful until we get a 
 kvs  = {'kv1'  : cfg.gk1   * cfg.kcndct[0] ,
         'kv2'  : cfg.gk2   * cfg.kcndct[1] ,

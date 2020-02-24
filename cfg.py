@@ -4,37 +4,30 @@ from netpyne.specs import Dict, ODict
 cfg = specs.SimConfig()  
 
 # Run parameters
-cfg.duration = 50
+cfg.duration = 307
 #cfg.dt = 0.01
-cfg.hParams = {'celsius': 22, 'v_init': -57}
+cfg.hParams = {'celsius': 37, 'v_init': -50}
 
 cfg.cvode_active = True
 # cfg.printRunTime = 0.1
 # cfg.printPopAvgRates = True
 
 # Recording
-"""
-cfg.recordTraces = {#'v0' : {'sec': 'axnperi', 'loc': 0.0, 'var': 'v'},
-                    'v1' : {'sec': 'axnperi', 'loc': 0.1, 'var': 'v'},
-                    #'v2' : {'sec': 'axnperi', 'loc': 0.2, 'var': 'v'},
+
+cfg.recordTraces = {'v1' : {'sec': 'axnperi', 'loc': 0.1, 'var': 'v'},
                     'v3' : {'sec': 'axnperi', 'loc': 0.3, 'var': 'v'},
-                    #'v4' : {'sec': 'axnperi', 'loc': 0.4, 'var': 'v'},
                     'v5' : {'sec': 'axnperi', 'loc': 0.5, 'var': 'v'},
-                    #'v6' : {'sec': 'axnperi', 'loc': 0.6, 'var': 'v'},
                     'v7' : {'sec': 'axnperi', 'loc': 0.7, 'var': 'v'},
-                    #'v8' : {'sec': 'axnperi', 'loc': 0.8, 'var': 'v'},
                     'v9' : {'sec': 'axnperi', 'loc': 0.9, 'var': 'v'},
-                    #'v10': {'sec': 'axnperi', 'loc': 1.0, 'var': 'v'}}
                     'vs' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'v'},
-                    'vc' : {'sec': 'axncntr', 'loc': 0.5, 'var': 'v'}}
-"""
-cfg.recordTraces = {'in7' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ina_nav17'},
-                    'in8' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ina_na18a'},
+                    'vc' : {'sec': 'axncntr', 'loc': 0.5, 'var': 'v'},
+                    'in7' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ina_nav17'},
+                    'in8' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ina_nav18'},
                     'in9' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ina_na19a'},
-                    'ik1' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ik_kv1'   },
+#                    'ik1' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ik_kv1'   },
                     'ik2' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ik_kv2'   },
                     'ik3' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ik_kv3'   },
-                    'ik4' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ik_kv4'   },
+#                    'ik4' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ik_kv4'   },
                     'ik7' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ik_kv7'   }}
 
 #cfg.recordTraces = {'vs' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'v'}}
@@ -56,7 +49,7 @@ cfg.saveDataInclude = ['simData', 'simConfig', 'netParams', 'net']
 
 # Analysis and plotting 
 cfg.analysis.plotTraces = Dict({'include': ['cnrn'], 'overlay': True, 'oneFigPer': 'cell', 'saveFig': True, 
-                             'showFig': False, 'timeRange': [0, cfg.duration]})
+                             'showFig': False, 'timeRange': [300, cfg.duration]})
 
 # Parameters
 #cfg.gna17 = 0.0057
@@ -80,30 +73,40 @@ cfg.nseg  = 101
 #cfg.gna18 = 0.6
 cfg.gna17 = 0.8
 cfg.gna18 = 0.6
-cfg.gna19 = 0.025
-cfg.nacndct = [ 1 , 1 , 1.0 ]
+cfg.gna19 = 0.06
+cfg.nacndct = [ 0.4 , 0.4 , 1 ]
 
 #cfg.nacndct = [ 0.5 , 0.5 , 1 ]
 
+
+###TEST VALUES###
+cfg.gk1 = 0.000
+cfg.gk2 = 0.6    # KDR channel
+cfg.gk3 = 0.5    # A-type channel
+cfg.gk4 = 0.000
+cfg.gk7 = 0.0200 # IM channel
+
+cfg.kcndct  = [ 0, 0.1, 2, 0, 1]
+cfg.gca = 0.0
+"""
+###WORKING VALUES###
 cfg.gk1 = 0.30225
 cfg.gk2 = 2.34
 cfg.gk3 = 0.192
 cfg.gk4 = 0.06139
-cfg.gk7 = 0.006
+cfg.gk7 = 0.008
 
 cfg.kcndct  = [ 1, 1, 1 , 1, 1 ]
-
-#cfg.kcndct  = [ 0.65 , 0.60, 0.80, 0.65, 1]
-#cfg.gk1 =  0.000072  * gkscale
-
-cfg.gca = 1.4
-
-cfg.ena =  70
-cfg.ek  =  -70
+"""
+#55.805
+#ena, ek for testing values...
+# 66.7  , -81.31
+cfg.ena =  66.7
+cfg.ek  =  -81.31
 cfg.rmut = 0.0
 
-cfg.gm  = 0.0001
-cfg.delay = [ 20] #, 200, 300, 400, 500 ]#, 100, 200, 300, 400, 500]#s, 200, 300, 400, 500, 600, 700, 800, 900  ]
+cfg.gm  = 0.0002
+cfg.delay = [ 300] #, 200, 300, 400, 500 ]#, 100, 200, 300, 400, 500]#s, 200, 300, 400, 500, 600, 700, 800, 900  ]
 
 #cfg.navs = {'na17a': cfg.gnaT * cfg.na17r * cfg.na17o, 'na18a': cfg.gnaT * cfg.na18o}
 # * 10 too much for gnabar17

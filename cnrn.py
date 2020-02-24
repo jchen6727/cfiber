@@ -107,9 +107,9 @@ class cnrn():
             sec.e_pas = self.vrest
 
 
-        #half channel density at soma -- if necessary
-        for sec in self.regions['soma']:
-            exestr = "sec.gnabar_%s = self.navs[nav]/2" %(nav)
+        ##half channel density at soma -- if necessary
+        #for sec in self.regions['soma']:
+        #    exestr = "sec.gnabar_%s = self.navs[nav]/2" %(nav)
 
 
     def connect_secs(self):

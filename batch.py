@@ -8,11 +8,11 @@ params = specs.ODict()
 #params['gna17'] = [ x for x in np.linspace(0.8, 2.2, 15)]
 
 #good target -- 0.013 -> 0.014
+params['nacndct'] = [ [x, x, 1] for x in [0.2, 0.3, 0.4, 0.5, 0.6 ] ]
+params['gna19']   = [ 0.03 + 0.01 * x for x in range(6)  ]
+params['gk2']     = [ 0.1 + 0.1 * x for x in range(10) ]
+params['gk3']     = [ 0.1 + 0.1 * x for x in range(10) ]
 
-#params['gk1'] = [ 0.1    * x for x in [0.5, 1, 1.5, 2] ]
-#params['gk2'] = [ 1.6    * x for x in [0.5, 1, 1.5, 2] ]
-#params['gk3'] = [ 0.05   * x for x in [0.5, 1, 1.5, 2] ]
-#params['gk4'] = [ 0.0175 * x for x in [0.5, 1, 1.5, 2] ]
 
 b = Batch(params = params, cfgFile = 'cfg.py', netParamsFile = 'netParams.py')
 

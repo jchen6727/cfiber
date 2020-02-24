@@ -2,7 +2,7 @@ NEURON {
 	SUFFIX kv2
 	USEION k READ ek WRITE ik
 	RANGE gk, ik, an, bn, gkbar
-	RANGE a0, a1, ah, ac, b0, bc, q10, tadg
+	RANGE a0, a1, ah, ac, b0, bc, q10, tadj
 }
 
 UNITS {
