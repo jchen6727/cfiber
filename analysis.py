@@ -49,11 +49,16 @@ def get_traces(title = "current", y = "na", start = 0, stop = 10, idstr = 'i', p
     return peaks
 
 
-start = 300 * 20 * 4 * 2
-stop  = 307 * 20 * 4 * 2
-get_traces("current", "na", start, stop, 'i', True, False)
-get_traces("voltage", "mv", start, stop, 'v', True, False)
-peaks = get_traces("current (Na)", "na", start, stop, 'in', True, True)
+start = int( (cfg.delay[0] - 3) / cfg.recordStep )
+stop  = int( (cfg.delay[-1] + 7) / cfg.recordStep )
 
-print("RMP: %f" %(data['vs'][6000]))
+start = int(200 / cfg.recordStep)
+stop  = int(204 / cfg.recordStep)
+print("RMP: %f" %(data['vs'][start]))
+
+get_traces("current", "na", start, stop, 'i', True, False)
+
+peaks = get_traces("voltage", "mv", start, stop, 'v', True, True)
+print(peaks)
+peaks = get_traces("current (Na)", "na", start, stop, 'in', True, True)
 print(peaks)

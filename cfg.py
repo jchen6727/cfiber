@@ -27,16 +27,18 @@ cfg.gna17 = 0.8
 #cfg.gna18 = 0.6            #<---#          0.6 for MM model
 cfg.gna18 = 0.9             #<---#          0.9 for HH model   
 cfg.gna19 = 0.06
-cfg.nacndct = [ 0.4 , 0.4 , 1 ]
+#cfg.nacndct = [ 0.4 , 0.4 , 1 ]
+cfg.nacndct = [ 0.15 , 0.15 , 1 ]
 
 ###TEST VALUES###
 cfg.gk1 = 0.000
-cfg.gk2 = 0.6    # KDR channel
-cfg.gk3 = 0.5    # A-type channel
+cfg.gk2 = 0.06    # KDR channel
+cfg.gk3 = 0.05    # A-type channel
 cfg.gk4 = 0.000
 cfg.gk7 = 0.0200 # IM channel
 
-cfg.kcndct  = [ 0, 0.1, 2, 0, 1]
+#cfg.kcndct  = [ 0, 0.1, 2, 0, 1]
+cfg.kcndct  = [ 0, 0.05 , 0.8 , 0, 1]
 cfg.gca = 0.0
 """
 ###WORKING VALUES###
@@ -56,7 +58,7 @@ cfg.ek  =  -81.31
 cfg.rmut = 0.0
 
 cfg.gm  = 0.0002
-cfg.delay = [ 300] #, 200, 300, 400, 500 ]#, 100, 200, 300, 400, 500]#s, 200, 300, 400, 500, 600, 700, 800, 900  ]
+cfg.delay = [ 200] #, 200, 300, 400, 500 ]#, 100, 200, 300, 400, 500]#s, 200, 300, 400, 500, 600, 700, 800, 900  ]
 
 #cfg.navs = {'na17a': cfg.gnaT * cfg.na17r * cfg.na17o, 'na18a': cfg.gnaT * cfg.na18o}
 # * 10 too much for gnabar17
@@ -67,13 +69,13 @@ cfg.delay = [ 300] #, 200, 300, 400, 500 ]#, 100, 200, 300, 400, 500]#s, 200, 30
 #cfg.navs = {'na17a': 0.04/6, 'na18a': 0.04/2, 'na19a': 0.04/3 }
 
 # Run parameters
-cfg.duration = 307
+cfg.duration = cfg.delay[-1] + 7
 #cfg.cvode_active = True
 cfg.dt = 0.01
 cfg.hParams = {'celsius': 37, 'v_init': -50}
 
 cfg.recordStims = False  
-cfg.recordStep = 0.0125 / 2 
+cfg.recordStep = 0.0125 / 2
 
 cfg.nav17 = 'nav17'
 cfg.nav18 = 'nav18'
@@ -94,13 +96,14 @@ cfg.recordTraces = {'v1' : {'sec': 'axnperi', 'loc': 0.1, 'var': 'v'},
 #                    'ik4' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ik_kv4'   },
                     'ik7' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ik_kv7'   }}
 
-# Analysis and plotting 
-cfg.analysis.plotTraces = Dict({'include': ['cnrn'], 'overlay': True, 'oneFigPer': 'cell', 'saveFig': 'sim_%s' %(cfg.duration), 
-                             'showFig': False, 'timeRange': [300, cfg.duration]})
-
 # Saving
-cfg.simLabel = 'sim'
+cfg.simLabel = 'sim1'
 cfg.saveFolder = 'data'
 cfg.savePickle = False
 cfg.saveJson = True
-cfg.saveDataInclude = ['simData', 'simConfig', 'netParams']
+#cfg.saveDataInclude = ['simData', 'simConfig', 'netParams']
+
+
+# Analysis and plotting 
+cfg.analysis.plotTraces = {'include': ['cnrn'], 'overlay': True, 'oneFigPer': 'cell', 'saveFig': True,#'plots/n7_%.1f_n9_%.3f_k2_%.3f_k3_%.3f.png' %(cfg.nacndct[0], cfg.gna19, cfg.gk2, cfg.gk3), 
+                           'showFig': False, 'timeRange': [cfg.delay[0] - 3, cfg.duration]}
