@@ -34,7 +34,7 @@ def plot_data( title = "title", xaxis = "xlabel", yaxis = "ylabel", labels = ['0
     plt.clf()
     plt.close()
 
-def get_traces(title = "current", y = "na", start = 0, stop = 10, idstr = 'i', plot = True, peak = False):
+def get_traces(title = "current", y = "ma/cm2", start = 0, stop = 10, idstr = 'i', plot = True, peak = False):
     idlen  = len(idstr)
     labels = [key for key in data.keys() if key[:idlen]==idstr]
     xdatas = [data['t'][start:stop]] * len(labels)
@@ -68,11 +68,14 @@ start = int(200 / cfg.recordStep)
 stop  = int(220 / cfg.recordStep)
 print("RMP: %f" %(data['vs'][start]))
 
-get_traces("current", "na", start, stop, 'i', True, False)
+get_traces("current", "ma/cm2", start, stop, 'i', True, False)
 
 peaks = get_traces("voltage", "mv", start, stop, 'v', True, True)
 print(peaks)
-peaks = get_traces("current (Na)", "na", start, stop, 'in', True, True)
+peaks = get_traces("current (na)", "ma/cm2", start, stop, 'in', True, True)
+#convert to ma/cm2 to na knowing that surface area of soma is 7.85e-5 cm2
+#this means x (na) = 1.5 ma/cm2 * 1.96e-5 cm2 * 1e6 na/ma
+
 print(peaks)
 
 print(get_propts())

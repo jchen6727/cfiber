@@ -77,7 +77,7 @@ cfg.gk7 = 0.01 # IM channel 0.02 is the value for XE9 blockade.
 
 cfg.kcndct  = [ 0, 1 , 1 , 0, 1]
 
-cfg.navq = { 'nav17': 1.0, 'nav18': 1, 'na19a': 5}
+cfg.navq = { 'nav17': 1.0, 'nav18': 1.}
 cfg.kvq = { 'kv2': 1.5 , 'kv3': 3.0 }
 
 cfg.gca = 0
@@ -90,7 +90,7 @@ cfg.ek  =  -70#-81.31
 cfg.rmut = 0.0
 
 cfg.gm  = 0.0001
-cfg.delay = [ 1500 ]#, 250, 300] #, 400, 500, 600 ] #, 200, 300, 400, 500 ]#, 100, 200, 300, 400, 500]#s, 200, 300, 400, 500, 600, 700, 800, 900  ]
+cfg.delay = [ 200 ]#, 250, 300] #, 400, 500, 600 ] #, 200, 300, 400, 500 ]#, 100, 200, 300, 400, 500]#s, 200, 300, 400, 500, 600, 700, 800, 900  ]
 
 #cfg.navs = {'na17a': cfg.gnaT * cfg.na17r * cfg.na17o, 'na18a': cfg.gnaT * cfg.na18o}
 # * 10 too much for gnabar17
@@ -141,6 +141,6 @@ cfg.saveJson = True
 #cfg.analysis.plotTraces = {'include': ['cnrn'], 'overlay': True, 'oneFigPer': 'cell', 'saveFig': True,#'plots/n7_%.1f_n9_%.3f_k2_%.3f_k3_%.3f.png' %(cfg.nacndct[0], cfg.gna19, cfg.gk2, cfg.gk3), 
 #                           'showFig': False, 'timeRange': [cfg.delay[0], cfg.duration]}
 
-cfg.duration = cfg.delay[-1] + 20
+cfg.duration  = 700
 cfg.analysis.plotTraces = {'include': ['cnrn'], 'overlay': True, 'oneFigPer': 'cell', 'saveFig': True,#'plots/n7_%.1f_n9_%.3f_k2_%.3f_k3_%.3f.png' %(cfg.nacndct[0], cfg.gna19, cfg.gk2, cfg.gk3), 
                            'showFig': False, 'timeRange': [0, cfg.duration]}

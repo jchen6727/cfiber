@@ -3,12 +3,6 @@ from netpyne.batch import Batch
 import numpy as np
 params = specs.ODict()
 
-
-#good target -- 1.0 -> 1.3
-#params['gna17'] = [ x for x in np.linspace(0.8, 2.2, 15)]
-
-#good target -- 0.013 -> 0.014
-
 """
 # log parameter testing
 gkparams = []
@@ -22,9 +16,14 @@ params['gk2']     = gkparams
 params['gk3']     = gkparams
 """
 
-params['nacndct'] = [ [ x , x , x ] for x in np.linspace(0.1 , 1.0, 20) ]
+ivs = [int(x) for x in np.linspace(20, 350, 10)]
 
-b = Batch(params = params, cfgFile = 'cfg.py', netParamsFile = 'netParams.py')
+delays = [ [300, 300 + iv] for iv in ivs]
+
+params['nacndct'] = [ [ 1 , 1 - x , 1 ] for x in np.linspace(0.0 , 0.9 , 10) ]
+params['delay']   = delays
+
+b = Batch(params = params, cfgFile = 'batch_cfg.py', netParamsFile = 'netParams.py')
 
 b.batchLabel = 'cndct'
 b.saveFolder = 'batch_cndct'

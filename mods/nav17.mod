@@ -33,7 +33,7 @@ NEURON {
 PARAMETER{ 
     gnabar = 0.1066 (S/cm2)
     emut   = 0
-    rmut   = 0.5
+    rmut   = 0.0
     q10    = 2.5
 }
 
@@ -85,7 +85,7 @@ BREAKPOINT{
     SOLVE states METHOD cnexp
     
     gna = gnabar * m^3 * h * s
-    ina = gna * (v - ena)
+    ina = gna * ( (1-rmut) * (v - ena) ) + (rmut * (v-emut) )
 }
 
 DERIVATIVE states{

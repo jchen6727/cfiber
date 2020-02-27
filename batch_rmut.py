@@ -22,9 +22,14 @@ params['gk2']     = gkparams
 params['gk3']     = gkparams
 """
 
-params['rmut'] = [ x for x in np.linspace(0.1 , 1.0, 20) ]
+ivs = [int(x) for x in np.linspace(20, 350, 10)]
 
-b = Batch(params = params, cfgFile = 'cfg.py', netParamsFile = 'netParams.py')
+delays = [ [300, 300 + iv] for iv in ivs]
+
+params['rmut']  = [ x for x in np.linspace(0.0 , 0.9 , 10) ]
+params['delay'] = delays
+
+b = Batch(params = params, cfgFile = 'batch_cfg.py', netParamsFile = 'netParams.py')
 
 b.batchLabel = 'rmut'
 b.saveFolder = 'batch_rmut'

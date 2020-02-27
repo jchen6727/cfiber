@@ -28,8 +28,7 @@ class cnrn():
                  cavs = { 'cal'  : 1},
                  ena  = 70,
                  ek   = -70,
-                 naq  = 2.0,
-                 kq   = 4.0,
+                 navq  = { 'na17a': 1} ,
                  kvq  = { 'kv4': 2.5 },
                  vrest= -57,
                  gm   = 1/10000,
@@ -46,7 +45,7 @@ class cnrn():
         self.kvs  = kvs  # potassium channel dictionary
         self.ek   = ek   # Nernst of potassium
 
-        self.naq  = naq
+        self.navq  = navq
 
         self.kvq  = kvq
 
@@ -106,7 +105,9 @@ class cnrn():
                 sec.insert(nav)
                 exestr = "sec.gnabar_%s = self.navs[nav]" %(nav)
                 exec(exestr)
-                exestr = "sec.q10_%s = self.naq" %(nav)
+
+            for navq in self.navq:
+                exestr = "sec.q10_%s = self.navq[navq]" %(navq)
                 exec(exestr)
 
             sec.ena = self.ena
@@ -138,8 +139,10 @@ class cnrn():
             sec.cm = 28 / (3.14 * 25**2) * 100
 
     def insert_mut(self):
-        self.rmut_nav17 = self.rmut
-        self.emut_nav17 = self.emut
+        #self.rmut_nav17 = self.rmut
+        #self.emut_nav17 = self.emut
+        self.rmut_nav18 = self.rmut
+        self.rmut_nav18 = self.emut
 
     def connect_secs(self):
         self.drgperi.connect(self.axnperi)

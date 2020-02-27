@@ -31,7 +31,7 @@ kvs  = {#'kv1'  : cfg.gk1   * cfg.kcndct[0] ,
 cavs = {'cal'  : cfg.gca }
 
 args = {'navs' : navs,      'kvs': kvs,         'cavs': cavs,
-        'naq'  : cfg.naq,   'kvq': cfg.kvq,          
+        'navq' : cfg.navq,  'kvq': cfg.kvq,          
         'ena'  : cfg.ena,   'ek': cfg.ek, 
         'vrest': cfg.vrest, 'gm': cfg.gm, 
         'rmut' : cfg.rmut,

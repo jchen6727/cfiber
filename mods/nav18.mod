@@ -23,6 +23,9 @@ NEURON {
     RANGE halpha, hbeta, htau, hinf
     RANGE salpha, sbeta, stau, sinf
     RANGE ualpha, ubeta, utau, uinf
+
+    RANGE emut, rmut
+
     RANGE q10, tadj
 
 }
@@ -30,6 +33,8 @@ NEURON {
 PARAMETER{ 
     gnabar = 0.1066 (S/cm2)
     q10    = 2.5
+    emut   = 0
+    rmut   = 0
 
 }
 
@@ -86,7 +91,7 @@ BREAKPOINT{
     SOLVE states METHOD cnexp
     
     gna = gnabar * m^3 * h * s * u
-    ina = gna * (v - ena)
+    ina = gna * ( (1-rmut) * (v - ena) ) + ( rmut * (v-emut) )
 }
 
 DERIVATIVE states{
