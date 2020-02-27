@@ -5,12 +5,20 @@ nociceptive c fiber
 from neuron import h
 
 class cfiber():
+    """
     secs = {'axnperi': {'nseg':100, 'L':5000, 'diam': .8  }, 
             'axncntr': {'nseg':100, 'L':5000, 'diam': .4  },
             'drgperi': {'nseg':100, 'L':100,  'diam': .8  },
             'drgcntr': {'nseg':100, 'L':100,  'diam': .4  },
             'drgstem': {'nseg':100, 'L':75,   'diam': 1.4 },
             'drgsoma': {'nseg':1,   'L':25,   'diam': 25  }}
+    """
+    secs = {'axnperi': {'nseg':100, 'L':5000, 'diam': .8  }, 
+            'axncntr': {'nseg':100, 'L':5000, 'diam': .4  },
+            'drgperi': {'nseg':11 , 'L':100,  'diam': .8  },
+            'drgcntr': {'nseg':11 , 'L':100,  'diam': .4  },
+            'drgstem': {'nseg':11 , 'L':75,   'diam': 1.4 },
+            'drgsoma': {'nseg':1  , 'L':25,   'diam': 25  }}
     
     def __init__(self,x=0,y=0,z=0,ID=0):
         self.regions = {'axn': [], 'drg': [], 'soma': []}

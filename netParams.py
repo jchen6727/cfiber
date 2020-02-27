@@ -19,10 +19,10 @@ navs = {'nav17': cfg.gna17 * cfg.nacndct[0],
         'nav18': cfg.gna18 * cfg.nacndct[1], 
         'na19a': cfg.gna19 * cfg.nacndct[2]}
 # more complex potassium channel config, not very useful until we get a 
-kvs  = {'kv1'  : cfg.gk1   * cfg.kcndct[0] ,
+kvs  = {#'kv1'  : cfg.gk1   * cfg.kcndct[0] ,
         'kv2'  : cfg.gk2   * cfg.kcndct[1] ,
         'kv3'  : cfg.gk3   * cfg.kcndct[2] ,
-        'kv4'  : cfg.gk4   * cfg.kcndct[3] , 
+        #'kv4'  : cfg.gk4   * cfg.kcndct[3] , 
         'kv7'  : cfg.gk7   * cfg.kcndct[4] }
 
 #kvs  = {'borgkdr' : cfg.gk1   * cfg.kcndct[0] ,
@@ -30,11 +30,13 @@ kvs  = {'kv1'  : cfg.gk1   * cfg.kcndct[0] ,
 
 cavs = {'cal'  : cfg.gca }
 
-args = {'navs' : navs,      'kvs': kvs,         'cavs': cavs,          
+args = {'navs' : navs,      'kvs': kvs,         'cavs': cavs,
+        'naq'  : cfg.naq,   'kvq': cfg.kvq,          
         'ena'  : cfg.ena,   'ek': cfg.ek, 
         'vrest': cfg.vrest, 'gm': cfg.gm, 
         'rmut' : cfg.rmut,
-        'L'    : cfg.L,     'nseg': cfg.nseg} 
+        'L'    : cfg.L,     'nseg': cfg.nseg}
+ 
 cnrnParams  = netParams.importCellParams(label='cnrn' , conds={'cellType': 'cnrn' }, fileName='cnrn.py' , cellName='cnrn' , cellArgs=args)
 #cdrgParams  = netParams.importCellParams(label='cdrg' , conds={'cellType': 'cdrg' }, fileName='cdrg.py' , cellName='cdrg' , cellArgs=args)
 #csomaParams = netParams.importCellParams(label='csoma', conds={'cellType': 'csoma'}, fileName='csoma.py', cellName='csoma', cellArgs=args)

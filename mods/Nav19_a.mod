@@ -10,6 +10,7 @@ NEURON {
 	SUFFIX na19a
 	USEION na READ ena WRITE ina
 	RANGE gnabar, ina, gna
+	RANGE q10, tadj
 	RANGE C1C2_a ,C2C1_a ,C2O1_a ,O1C2_a ,C2O2_a ,O2C2_a ,O1I1_a ,I1O1_a ,I1I2_a ,I2I1_a ,I1C1_a ,C1I1_a
 }
 
@@ -23,6 +24,7 @@ PARAMETER {
 	ena (mV)
 	celsius (degC)
 	gnabar  = 0.1	 (mho/cm2)
+	q10 = 2
 	
 	C1C2b2	  = 0.8
 	C1C2v2    = -21
@@ -102,8 +104,7 @@ ASSIGNED {
 	I2I1_a (/ms)
 	I1C1_a (/ms)
 	C1I1_a (/ms)
-	
-	Q10 (1)
+	tadj (1)
 }
 
 STATE {
@@ -117,7 +118,7 @@ STATE {
 
 
 INITIAL {
-	Q10 = 2^((celsius-20(degC))/10 (degC))
+	tadj = q10^((celsius-20(degC))/10 (degC))
 	SOLVE kin
 	STEADYSTATE sparse
 }
@@ -147,17 +148,17 @@ FUNCTION rates2(v, b, vv, k) {
 
 PROCEDURE rates(v(mV)) {
 UNITSOFF
-	C1C2_a = Q10*(rates2(v, C1C2b2, C1C2v2, C1C2k2))
-	C2C1_a = Q10*(rates2(v, C2C1b1, C2C1v1, C2C1k1) + rates2(v, C2C1b2, C2C1v2, C2C1k2))
-	C2O1_a = Q10*(rates2(v, C2O1b2, C2O1v2, C2O1k2))
-	O1C2_a = Q10*(rates2(v, O1C2b1, O1C2v1, O1C2k1) + rates2(v, O1C2b2, O1C2v2, O1C2k2))
-	C2O2_a = Q10*(rates2(v, C2O2b2, C2O2v2, C2O2k2))
-	O2C2_a = Q10*(rates2(v, O2C2b1, O2C2v1, O2C2k1) + rates2(v, O2C2b2, O2C2v2, O2C2k2))
-	O1I1_a = Q10*(rates2(v, O1I1b1, O1I1v1, O1I1k1) + rates2(v, O1I1b2, O1I1v2, O1I1k2))
-	I1O1_a = Q10*(rates2(v, I1O1b1, I1O1v1, I1O1k1))
-	I1C1_a = Q10*(rates2(v, I1C1b1, I1C1v1, I1C1k1))
-	C1I1_a = Q10*(rates2(v, C1I1b2, C1I1v2, C1I1k2))
-	I1I2_a = Q10*(rates2(v, I1I2b2, I1I2v2, I1I2k2))
-	I2I1_a = Q10*(rates2(v, I2I1b1, I2I1v1, I2I1k1))
+	C1C2_a = tadj*(rates2(v, C1C2b2, C1C2v2, C1C2k2))
+	C2C1_a = tadj*(rates2(v, C2C1b1, C2C1v1, C2C1k1) + rates2(v, C2C1b2, C2C1v2, C2C1k2))
+	C2O1_a = tadj*(rates2(v, C2O1b2, C2O1v2, C2O1k2))
+	O1C2_a = tadj*(rates2(v, O1C2b1, O1C2v1, O1C2k1) + rates2(v, O1C2b2, O1C2v2, O1C2k2))
+	C2O2_a = tadj*(rates2(v, C2O2b2, C2O2v2, C2O2k2))
+	O2C2_a = tadj*(rates2(v, O2C2b1, O2C2v1, O2C2k1) + rates2(v, O2C2b2, O2C2v2, O2C2k2))
+	O1I1_a = tadj*(rates2(v, O1I1b1, O1I1v1, O1I1k1) + rates2(v, O1I1b2, O1I1v2, O1I1k2))
+	I1O1_a = tadj*(rates2(v, I1O1b1, I1O1v1, I1O1k1))
+	I1C1_a = tadj*(rates2(v, I1C1b1, I1C1v1, I1C1k1))
+	C1I1_a = tadj*(rates2(v, C1I1b2, C1I1v2, C1I1k2))
+	I1I2_a = tadj*(rates2(v, I1I2b2, I1I2v2, I1I2k2))
+	I2I1_a = tadj*(rates2(v, I2I1b1, I2I1v1, I2I1k1))
 UNITSON
 }

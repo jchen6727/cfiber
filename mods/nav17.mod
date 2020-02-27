@@ -26,13 +26,15 @@ NEURON {
 
     RANGE emut, rmut
 
+    RANGE q10
+
 }
 
 PARAMETER{ 
     gnabar = 0.1066 (S/cm2)
     emut   = 0
     rmut   = 0.5
-
+    q10    = 2.5
 }
 
 ASSIGNED {
@@ -61,7 +63,7 @@ ASSIGNED {
     hinf
     sinf
 
-    tadj
+    tadj (1)
 
 }
 
@@ -73,6 +75,7 @@ UNITSOFF
 
 INITIAL{
     settables(v)
+    tadj = q10 ^ ( ( celsius - 21) / 10 )
     m = minf
     h = hinf
     s = sinf
@@ -97,7 +100,6 @@ PROCEDURE settables(v (mV)){
 :    TABLE minf, mtau, hinf, htau, sinf, stau
 :    FROM -100 TO 100 WITH 200
 
-    tadj = 2.5 ^ ( ( celsius - 21) / 10 )
     malpha = 15.5 / ( 1 + exp( (v-5   ) / -12.08 ) )
     mbeta  = 35.2 / ( 1 + exp( (v+72.7) /  16.7  ) )
     mtau   = 1 / (malpha + mbeta) / tadj

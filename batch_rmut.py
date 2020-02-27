@@ -8,16 +8,26 @@ params = specs.ODict()
 #params['gna17'] = [ x for x in np.linspace(0.8, 2.2, 15)]
 
 #good target -- 0.013 -> 0.014
-params['nacndct'] = [ [ x , x , 1] for x in np.linspace(0.1 , 1.0 , 10 ) ]
-params['gna19']   = [ x for x in np.linspace(0.05, 0.1 , 6  ) ]
-params['gk2']     = [ x for x in np.linspace(0.1 , 1.0 , 10 ) ]
-params['gk3']     = [ x for x in np.linspace(0.1 , 1.0 , 10 ) ]
 
+"""
+# log parameter testing
+gkparams = []
+
+for x in np.logspace( -4, 0, 5 ): gkparams.extend(np.multiply([1/3, 2/3, 1], x))
+
+params['nacndct'] = [ [ x , x , 1 ] for x in np.linspace(0.1 , 0.4 , 4 ) ]
+
+params['gk2']     = gkparams
+
+params['gk3']     = gkparams
+"""
+
+params['rmut'] = [ x for x in np.linspace(0.1 , 1.0, 20) ]
 
 b = Batch(params = params, cfgFile = 'cfg.py', netParamsFile = 'netParams.py')
 
-b.batchLabel = 'NaV'
-b.saveFolder = 'batch_data'
+b.batchLabel = 'rmut'
+b.saveFolder = 'batch_rmut'
 b.method = 'grid'
 b.runCfg = {'type': 'mpi_bulletin', 'script': 'init.py', 'skip': True}
 

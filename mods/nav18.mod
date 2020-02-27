@@ -23,11 +23,13 @@ NEURON {
     RANGE halpha, hbeta, htau, hinf
     RANGE salpha, sbeta, stau, sinf
     RANGE ualpha, ubeta, utau, uinf
+    RANGE q10, tadj
 
 }
 
 PARAMETER{ 
     gnabar = 0.1066 (S/cm2)
+    q10    = 2.5
 
 }
 
@@ -73,6 +75,7 @@ UNITSOFF
 
 INITIAL{
     settables(v)
+    tadj = q10 ^ ( ( celsius - 21) / 10 )
     m = minf
     h = hinf
     s = sinf
@@ -99,7 +102,6 @@ PROCEDURE settables(v (mV)){
 :    TABLE minf, mtau, hinf, htau, sinf, stau
 :    FROM -100 TO 100 WITH 200
 
-    tadj = 2.5 ^ ( ( celsius - 21) / 10 )
     malpha = 2.85 - 2.839 / ( 1 + exp( (v-1.159 ) / 13.95  ) )
     mbeta  = 7.6205       / ( 1 + exp( (v+46.463) / 8.8289 ) )
     mtau   = 1 / (malpha + mbeta) / tadj

@@ -6,13 +6,21 @@ including peripheral fiber, drg with soma, central fiber
 from neuron import h
 
 class cnrn():
+
+#    secs = {'axnperi': {'nseg':301, 'L':10000,'diam': 0.8 },
+#            'drgperi': {'nseg':101 , 'L':100,  'diam': 0.8 },
+#            'drgstem': {'nseg':101 , 'L':75,   'diam': 1.4 },
+#            'drgsoma': {'nseg':1  , 'L':25,   'diam': 25  },
+#            'drgcntr': {'nseg':31 , 'L':100,  'diam': 0.4 },
+#            'axncntr': {'nseg':1  , 'L':10,   'diam': 0.4 }}
+#    # 100 segments, 0.5 mm x 0.8 um
+
     secs = {'axnperi': {'nseg':301, 'L':10000,'diam': 0.8 },
-            'drgperi': {'nseg':101 , 'L':100,  'diam': 0.8 },
-            'drgstem': {'nseg':101 , 'L':75,   'diam': 1.4 },
+            'drgperi': {'nseg':11 * 3, 'L':100,  'diam': 0.8 },
+            'drgstem': {'nseg':11 * 3, 'L':75,   'diam': 1.4 },
             'drgsoma': {'nseg':1  , 'L':25,   'diam': 25  },
-            'drgcntr': {'nseg':31 , 'L':100,  'diam': 0.4 },
-            'axncntr': {'nseg':1  , 'L':10,   'diam': 0.4 }}
-    # 100 segments, 0.5 mm x 0.8 um
+            'drgcntr': {'nseg':11 * 3, 'L':100,  'diam': 0.4 },
+            'axncntr': {'nseg':1 , 'L':10,  'diam': 0.4 }}
 
     def __init__(self,x=0,y=0,z=0,ID=0, 
                  navs = { 'na17a': 1},   #{'na17a': 0.04/6, 'na18a': 0.12/6, 'na19a': 0.08/6  }, 
@@ -20,6 +28,9 @@ class cnrn():
                  cavs = { 'cal'  : 1},
                  ena  = 70,
                  ek   = -70,
+                 naq  = 2.0,
+                 kq   = 4.0,
+                 kvq  = { 'kv4': 2.5 },
                  vrest= -57,
                  gm   = 1/10000,
                  rmut = 0.0,
@@ -35,6 +46,10 @@ class cnrn():
         self.kvs  = kvs  # potassium channel dictionary
         self.ek   = ek   # Nernst of potassium
 
+        self.naq  = naq
+
+        self.kvq  = kvq
+
         self.cavs = cavs
 
         self.emut = (ena + ek) / 2 # mutated reversal in between sodium and potassium channel
@@ -48,9 +63,12 @@ class cnrn():
         self.set_morphology()
         self.insert_conductances()
         
+        if self.rmut > 0:
+            self.insert_mut()
+
         self.connect_secs()
         self.initialize_values()
-
+        
     def add_comp(self, sec, *regions):
         self.__dict__[sec] = h.Section(name=sec)
         for region in regions:
@@ -88,12 +106,18 @@ class cnrn():
                 sec.insert(nav)
                 exestr = "sec.gnabar_%s = self.navs[nav]" %(nav)
                 exec(exestr)
+                exestr = "sec.q10_%s = self.naq" %(nav)
+                exec(exestr)
 
             sec.ena = self.ena
 
             for kv in self.kvs:
                 sec.insert(kv)
                 exestr = "sec.gkbar_%s = self.kvs[kv]" %(kv)
+                exec(exestr)
+            
+            for kv in self.kvq:
+                exestr = "sec.q10_%s = self.kvq[kv]" %(kv)
                 exec(exestr)
 
             sec.ek  = self.ek
@@ -107,10 +131,15 @@ class cnrn():
             sec.e_pas = self.vrest
 
 
-        ##half channel density at soma -- if necessary
-        #for sec in self.regions['soma']:
+        #half channel density at soma -- if necessary
+        for sec in self.regions['soma']:
         #    exestr = "sec.gnabar_%s = self.navs[nav]/2" %(nav)
+        #revise capacitance for soma to meet lit. values
+            sec.cm = 28 / (3.14 * 25**2) * 100
 
+    def insert_mut(self):
+        self.rmut_nav17 = self.rmut
+        self.emut_nav17 = self.emut
 
     def connect_secs(self):
         self.drgperi.connect(self.axnperi)

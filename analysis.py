@@ -48,12 +48,24 @@ def get_traces(title = "current", y = "na", start = 0, stop = 10, idstr = 'i', p
 
     return peaks
 
+def get_propts():
+    propts = {}
+    dx = cfg.L * 0.8 # in microns
+    dt = data['t'][np.argmax(data['v9'])] - data['t'][np.argmax(data['v1'])] # in ms
+    propts['peri_vel'] = dx/dt * 1e-3 # correction to meters/second
+    propts['soma_pkv'] = max(data['vs'])
+    propts['soma_pkt'] = data['t'][np.argmax(data['vs'])]
+    propts['soma_ahp'] = min(data['vs'])
+    
+    return propts
+    
 
-start = int( (cfg.delay[0] - 3) / cfg.recordStep )
+
+start = int( (cfg.delay[0]  - 3) / cfg.recordStep )
 stop  = int( (cfg.delay[-1] + 7) / cfg.recordStep )
 
 start = int(200 / cfg.recordStep)
-stop  = int(204 / cfg.recordStep)
+stop  = int(220 / cfg.recordStep)
 print("RMP: %f" %(data['vs'][start]))
 
 get_traces("current", "na", start, stop, 'i', True, False)
@@ -62,3 +74,7 @@ peaks = get_traces("voltage", "mv", start, stop, 'v', True, True)
 print(peaks)
 peaks = get_traces("current (Na)", "na", start, stop, 'in', True, True)
 print(peaks)
+
+print(get_propts())
+
+
