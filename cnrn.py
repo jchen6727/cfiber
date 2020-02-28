@@ -139,10 +139,11 @@ class cnrn():
             sec.cm = 28 / (3.14 * 25**2) * 100
 
     def insert_mut(self):
-        #self.rmut_nav17 = self.rmut
-        #self.emut_nav17 = self.emut
-        self.rmut_nav18 = self.rmut
-        self.rmut_nav18 = self.emut
+        for sec in self.regions['all']:
+            #self.rmut_nav17 = self.rmut
+            #self.emut_nav17 = self.emut
+            sec.rmut_nav18 = self.rmut
+            sec.emut_nav18 = self.emut
 
     def connect_secs(self):
         self.drgperi.connect(self.axnperi)

@@ -91,7 +91,7 @@ BREAKPOINT{
     SOLVE states METHOD cnexp
     
     gna = gnabar * m^3 * h * s * u
-    ina = gna * ( (1-rmut) * (v - ena) ) + ( rmut * (v-emut) )
+    ina = gna * ( (1-rmut) * (v - ena) + ( rmut * (v-emut) ) )
 }
 
 DERIVATIVE states{

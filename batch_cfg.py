@@ -20,7 +20,7 @@ cfg.vrest = cfg.hParams['v_init']
 #length of the peripheral axon
 cfg.L     = 1000
 cfg.nseg  = 101
-#testing dlambda
+#testing dlambda, this is okay
 """
 #MM channel values
 cfg.gna17 = 0.8 * 0.3
