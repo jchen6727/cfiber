@@ -48,20 +48,9 @@ cfg.rmut = 0.0
 cfg.gm  = 0.0001
 cfg.delay = [ 200 ]#, 250, 300] #, 400, 500, 600 ] #, 200, 300, 400, 500 ]#, 100, 200, 300, 400, 500]#s, 200, 300, 400, 500, 600, 700, 800, 900  ]
 
-#cfg.navs = {'na17a': cfg.gnaT * cfg.na17r * cfg.na17o, 'na18a': cfg.gnaT * cfg.na18o}
-# * 10 too much for gnabar17
-#somewhere around 175 for original gnabar17
-#cfg.navs = {'nav1p7': 0.04, 'na18a': 0, 'na19a': 0}
-#cfg.navs = {'na17a': cfg.gnaT * cfg.na17r * cfg.na17o, 'na18a': cfg.gnaT * cfg.na18o}
-#cfg.navs = {'na17a': 0.04/3 * 100, 'na18a': 0.04}
-#cfg.navs = {'na17a': 0.04/6, 'na18a': 0.04/2, 'na19a': 0.04/3 }
-
-# Run parameters
-#cfg.duration = cfg.delay[-1] + 20
 
 cfg.cvode_active = True
-#cfg.dt = 0.01
-#cfg.hParams = {'celsius': 37, 'v_init': -50}
+
 
 cfg.recordStims = False  
 cfg.recordStep = 0.0125
@@ -90,7 +79,7 @@ cfg.simLabel = 'sim1'
 cfg.saveFolder = 'data'
 cfg.savePickle = False
 cfg.saveJson = True
-#cfg.saveDataInclude = ['simData', 'simConfig', 'netParams']
+cfg.saveDataInclude = ['simData']
 
 
 # Analysis and plotting 
@@ -98,5 +87,7 @@ cfg.saveJson = True
 #                           'showFig': False, 'timeRange': [cfg.delay[0], cfg.duration]}
 
 cfg.duration  = 600
-cfg.analysis.plotTraces = {'include': ['cnrn'], 'overlay': True, 'oneFigPer': 'cell', 'saveFig': True,#'plots/n7_%.1f_n9_%.3f_k2_%.3f_k3_%.3f.png' %(cfg.nacndct[0], cfg.gna19, cfg.gk2, cfg.gk3), 
+cfg.analysis.plotTraces = {'include': ['cnrn'], 'overlay': True, 'oneFigPer': 'cell', 'saveData': True, 'saveFig': True,#'plots/n7_%.1f_n9_%.3f_k2_%.3f_k3_%.3f.png' %(cfg.nacndct[0], cfg.gna19, cfg.gk2, cfg.gk3), 
                            'showFig': False, 'timeRange': [200, cfg.duration]}
+
+#use the saveData to plot values
