@@ -18,52 +18,8 @@ cfg.vrest = cfg.hParams['v_init']
 #cfg.cndct = [ 1.5 , 0.5 ]
 
 #length of the peripheral axon
-cfg.L     = 1000
-cfg.nseg  = 101
-#testing dlambda, this is okay
-"""
-#MM channel values
-cfg.gna17 = 0.8 * 0.3
-#cfg.gna18 = 0.6            #<---#          0.6 for MM model
-cfg.gna18 = 0.9 * 0.3             #<---#          0.9 for HH model   
-cfg.gna19 = 0.06
-#cfg.nacndct = [ 0.4 , 0.4 , 1 ]
-cfg.nacndct = [ 1 , 1 , 0.5 ]
-#cfg.nacndct = [ 0.4 , 0.4 , 0.5]
-#cfg.nacndct = [ 0.2 , 0.2 , 0.5 ]
-###TEST VALUES###
-cfg.gk1 = 0.000
-cfg.gk2 = 0.06    # KDR channel
-cfg.gk3 = 0.05    # A-type channel
-cfg.gk4 = 0.000
-cfg.gk7 = 0.0200 # IM channel 0.02 is the value for XE9 blockade.
-
-cfg.gk2 = 0.002
-cfg.gk3 = 0.06
-
-cfg.gk2 = 0.06
-
-#cfg.kcndct  = [ 0, 0.1, 2, 0, 1]
-#cfg.kcndct  = [ 0, 0.05 , 0.8 , 0, 1]
-cfg.kcndct  = [ 0, 1 , 1 , 0, 0.5]
-cfg.gca = 0.0
-
-cfg.naq = 1.0
-#cfg.kq  = 4.0
-cfg.kvq = { 'kv2': 1.5 , 'kv3': 3.0 }
-"""
-
-"""
-###WORKING VALUES###
-cfg.gk1 = 0.30225
-cfg.gk2 = 2.34
-cfg.gk3 = 0.192
-cfg.gk4 = 0.06139
-cfg.gk7 = 0.008
-
-cfg.kcndct  = [ 1, 1, 1 , 1, 1 ]
-"""
-
+cfg.L     = 10000
+cfg.nseg  = 1001
 
 cfg.gna17 = 0.8 * 0.3
 cfg.gna18 = 0.9 * 0.3   
@@ -141,6 +97,6 @@ cfg.saveJson = True
 #cfg.analysis.plotTraces = {'include': ['cnrn'], 'overlay': True, 'oneFigPer': 'cell', 'saveFig': True,#'plots/n7_%.1f_n9_%.3f_k2_%.3f_k3_%.3f.png' %(cfg.nacndct[0], cfg.gna19, cfg.gk2, cfg.gk3), 
 #                           'showFig': False, 'timeRange': [cfg.delay[0], cfg.duration]}
 
-cfg.duration  = 700
+cfg.duration  = 600
 cfg.analysis.plotTraces = {'include': ['cnrn'], 'overlay': True, 'oneFigPer': 'cell', 'saveFig': True,#'plots/n7_%.1f_n9_%.3f_k2_%.3f_k3_%.3f.png' %(cfg.nacndct[0], cfg.gna19, cfg.gk2, cfg.gk3), 
-                           'showFig': False, 'timeRange': [0, cfg.duration]}
+                           'showFig': False, 'timeRange': [200, cfg.duration]}

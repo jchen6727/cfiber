@@ -18,52 +18,9 @@ cfg.vrest = cfg.hParams['v_init']
 #cfg.cndct = [ 1.5 , 0.5 ]
 
 #length of the peripheral axon
-cfg.L     = 100000
-cfg.nseg  = 101
+cfg.L     = 10000#100000
+cfg.nseg  = 1001
 #testing dlambda
-"""
-#MM channel values
-cfg.gna17 = 0.8 * 0.3
-#cfg.gna18 = 0.6            #<---#          0.6 for MM model
-cfg.gna18 = 0.9 * 0.3             #<---#          0.9 for HH model   
-cfg.gna19 = 0.06
-#cfg.nacndct = [ 0.4 , 0.4 , 1 ]
-cfg.nacndct = [ 1 , 1 , 0.5 ]
-#cfg.nacndct = [ 0.4 , 0.4 , 0.5]
-#cfg.nacndct = [ 0.2 , 0.2 , 0.5 ]
-###TEST VALUES###
-cfg.gk1 = 0.000
-cfg.gk2 = 0.06    # KDR channel
-cfg.gk3 = 0.05    # A-type channel
-cfg.gk4 = 0.000
-cfg.gk7 = 0.0200 # IM channel 0.02 is the value for XE9 blockade.
-
-cfg.gk2 = 0.002
-cfg.gk3 = 0.06
-
-cfg.gk2 = 0.06
-
-#cfg.kcndct  = [ 0, 0.1, 2, 0, 1]
-#cfg.kcndct  = [ 0, 0.05 , 0.8 , 0, 1]
-cfg.kcndct  = [ 0, 1 , 1 , 0, 0.5]
-cfg.gca = 0.0
-
-cfg.naq = 1.0
-#cfg.kq  = 4.0
-cfg.kvq = { 'kv2': 1.5 , 'kv3': 3.0 }
-"""
-
-"""
-###WORKING VALUES###
-cfg.gk1 = 0.30225
-cfg.gk2 = 2.34
-cfg.gk3 = 0.192
-cfg.gk4 = 0.06139
-cfg.gk7 = 0.008
-
-cfg.kcndct  = [ 1, 1, 1 , 1, 1 ]
-"""
-
 
 cfg.gna17 = 0.8 * 0.3
 cfg.gna18 = 0.9 * 0.3   
@@ -91,17 +48,6 @@ cfg.rmut = 0.0
 
 cfg.gm  = 0.0001
 cfg.delay = [ 300 ]#, 250, 300] #, 400, 500, 600 ] #, 200, 300, 400, 500 ]#, 100, 200, 300, 400, 500]#s, 200, 300, 400, 500, 600, 700, 800, 900  ]
-
-#cfg.navs = {'na17a': cfg.gnaT * cfg.na17r * cfg.na17o, 'na18a': cfg.gnaT * cfg.na18o}
-# * 10 too much for gnabar17
-#somewhere around 175 for original gnabar17
-#cfg.navs = {'nav1p7': 0.04, 'na18a': 0, 'na19a': 0}
-#cfg.navs = {'na17a': cfg.gnaT * cfg.na17r * cfg.na17o, 'na18a': cfg.gnaT * cfg.na18o}
-#cfg.navs = {'na17a': 0.04/3 * 100, 'na18a': 0.04}
-#cfg.navs = {'na17a': 0.04/6, 'na18a': 0.04/2, 'na19a': 0.04/3 }
-
-# Run parameters
-#cfg.duration = cfg.delay[-1] + 20
 
 cfg.cvode_active = True
 #cfg.dt = 0.01
@@ -141,6 +87,6 @@ cfg.saveJson = True
 #cfg.analysis.plotTraces = {'include': ['cnrn'], 'overlay': True, 'oneFigPer': 'cell', 'saveFig': True,#'plots/n7_%.1f_n9_%.3f_k2_%.3f_k3_%.3f.png' %(cfg.nacndct[0], cfg.gna19, cfg.gk2, cfg.gk3), 
 #                           'showFig': False, 'timeRange': [cfg.delay[0], cfg.duration]}
 
-cfg.duration = cfg.delay[-1] + 50
+cfg.duration = cfg.delay[-1] + 100
 cfg.analysis.plotTraces = {'include': ['cnrn'], 'overlay': True, 'oneFigPer': 'cell', 'saveFig': True,#'plots/n7_%.1f_n9_%.3f_k2_%.3f_k3_%.3f.png' %(cfg.nacndct[0], cfg.gna19, cfg.gk2, cfg.gk3), 
                            'showFig': False, 'timeRange': [0, cfg.duration]}

@@ -27,3 +27,8 @@ cfg.kcndct  = [ 0, 1 , 1 , 0, 1]
 
 cfg.naq = 1.0
 cfg.kvq = { 'kv2': 1.5 , 'kv3': 3.0 }
+
+revisions for sodium channel q10s, can now customize them individually
+
+testing L and nseg changes to the axon.
+minimum nseg for L = 100000 microns (0.1 meter)
