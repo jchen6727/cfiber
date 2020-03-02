@@ -6,78 +6,123 @@ import matplotlib.pyplot as plt
 
 from cfg import cfg
 
-with open("data/sim1.json", "r") as rf:
-    ndct = json.load(rf)
+class analysis():
+    def __init__(self, filename, output = "analysis/"):
+        with open(filename, 'r') as fp:
+            jdata = json.load(fp)
 
-data = {}
+        self.output = output
+        data = {}
 
-data['t'] = ndct['simData']['t']
-for var in cfg.recordTraces.keys():
-    data[var] = ndct['simData'][var]['cell_0']
+        data['t'] = jdata['simData']['t']
+    
+        for var in cfg.recordTraces.keys():
+            data[var] = jdata['simData'][var]['cell_0']
 
-### get all the data -- put in data{} ###
+    ### get all the data -- put in data{} ###
+        self.data = data
+        self.dt   = cfg.recordStep
 
-def plot_data( title = "title", xaxis = "xlabel", yaxis = "ylabel", labels = ['0'], xdatas = [ [0] ], ydatas = [ [0] ] ):
-    fig, ax = plt.subplots()
-    ax.set_xlabel(xaxis)
-    ax.set_ylabel(yaxis)
+        self.labels = [ '0' ]
+        self.xdatas = [ [0] ]
+        self.ydatas = [ [0] ]
 
-    ax.set_title(title)
+        self.spikes = {}
 
-    for i, label in enumerate(labels):
-        ax.plot(xdatas[i], ydatas[i], label = label)
+        self.set_window( 0 , cfg.duration )
 
-    ax.legend()
-    plt.savefig( title + ".png")
+    def set_window(self, start, stop):
+        self.start = self.get_index(start)
+        self.stop  = self.get_index(stop)
 
-    plt.cla()
-    plt.clf()
-    plt.close()
+    def get_index(self, time):
+        return int(time / self.dt)
 
-def get_traces(title = "current", y = "ma/cm2", start = 0, stop = 10, idstr = 'i', plot = True, peak = False):
-    idlen  = len(idstr)
-    labels = [key for key in data.keys() if key[:idlen]==idstr]
-    xdatas = [data['t'][start:stop]] * len(labels)
-    ydatas = [ data[i][start:stop] for i in labels ]
-    peaks = {}
-    if plot:
-        plot_data( title, "time (ms)", "%s (%s)" %(title, y), labels, xdatas, ydatas )
-    if peak:
+    def get_spike( self, trace = 'vs' ):
+        ydata = self.data[trace][self.start:self.stop]
+        self.spikes[trace] = {  'peak': max(ydata),
+                                'time': self.data['t'][self.start + np.argmax(ydata)]  }
+        return self.spikes[trace]
+
+    def get_vel( self, start = 0, stop = cfg.duration ):
+        self.set_window(start, stop)
+        v1   = self.get_spike('v1')
+        v9   = self.get_spike('v9')
+        dx   = cfg.L * 0.8
+        dt   = v9['time'] - v1['time']
+        vel  = dx * 1E-6 / dt * 1E3
+        return vel
+
+    def plot_soma( self, start = 0, stop = cfg.duration ):
+        self.set_window(start, stop)
+        vs   = self.get_spike('vs')
+        sstart = vs['time'] - 5
+        sstop  = vs['time'] + 25
+        self.set_window(sstart, sstop)
+        self.plot_traces(title = "soma(v)", yu = "mv", idstr = "vs")
+        self.plot_traces(title = "soma(i)", yu = "ma/cm2" , idstr = 'i')
+
+    def get_propts( self ):
+        propts = {}
+        dx = cfg.L * 0.8 # in microns
+        dt = self.data['t'][np.argmax(self.data['v9'])] - self.data['t'][np.argmax(self.data['v1'])] # in ms
+        propts['peri_vel'] = dx/dt * 1e-3 # correction to meters/second
+        propts['soma_pkv'] = max(self.data['vs'])
+        propts['soma_pkt'] = self.data['t'][np.argmax(self.data['vs'])]
+        propts['soma_ahp'] = min(self.data['vs'])
+        return propts
+
+    def plot_data( self, title = "title", xaxis = "xlabel", yaxis = "ylabel", labels = ['0'], xdatas = [ [0] ], ydatas = [ [0] ] ):
+        fig, ax = plt.subplots()
+        ax.set_xlabel(xaxis)
+        ax.set_ylabel(yaxis)
+
+        ax.set_title(title)
+
         for i, label in enumerate(labels):
-            peaks[label] = [min(ydatas[i]), max(ydatas[i])]
+            ax.plot(xdatas[i], ydatas[i], label = label)
 
-    return peaks
+        ax.legend()
+        plt.savefig( self.output + title + ".png")
 
-def get_propts():
-    propts = {}
-    dx = cfg.L * 0.8 # in microns
-    dt = data['t'][np.argmax(data['v9'])] - data['t'][np.argmax(data['v1'])] # in ms
-    propts['peri_vel'] = dx/dt * 1e-3 # correction to meters/second
-    propts['soma_pkv'] = max(data['vs'])
-    propts['soma_pkt'] = data['t'][np.argmax(data['vs'])]
-    propts['soma_ahp'] = min(data['vs'])
+        plt.cla()
+        plt.clf()
+        plt.close()
+
+    def plot_traces( self, title = "current", yu = "ma/cm2", idstr = "i" ):
+        self.get_traces(idstr)
+
+        self.plot_data( title, "time (ms)", "%s (%s)" %(title, yu), self.labels, self.xdata * len(self.labels), self.ydatas )
+
+    def get_traces( self, idstr = 'i'):
+        idlen  = len(idstr)
+        labels = [key for key in self.data.keys() if key[:idlen]==idstr]
+        xdata  = [self.data['t'][self.start:self.stop]]
+        ydatas = [self.data[i][self.start:self.stop] for i in labels ]
+        bounds = {}
+        for i, label in enumerate(labels):
+            bounds[label] = [min(ydatas[i]), max(ydatas[i])]
+        
+        self.labels = labels
+        self.xdata  = xdata
+        self.ydatas = ydatas
+        
+        return bounds
+
+
+if __name__ == "__main__":
+    anl = analysis("data/sim1.json", "data/")
+    print("velocity is %f m/s" %(anl.get_vel()) )
+    anl.set_window(275, 375)
+    anl.plot_traces( "voltage", "mv", "v")
+    anl.plot_soma(275, 375)
     
-    return propts
-    
 
 
-start = int( (cfg.delay[0]  - 3) / cfg.recordStep )
-stop  = int( (cfg.delay[-1] + 7) / cfg.recordStep )
-
-start = int(200 / cfg.recordStep)
-stop  = int(220 / cfg.recordStep)
-print("RMP: %f" %(data['vs'][start]))
-
-get_traces("current", "ma/cm2", start, stop, 'i', True, False)
-
-peaks = get_traces("voltage", "mv", start, stop, 'v', True, True)
-print(peaks)
-peaks = get_traces("current (na)", "ma/cm2", start, stop, 'in', True, True)
-#convert to ma/cm2 to na knowing that surface area of soma is 7.85e-5 cm2
-#this means x (na) = 1.5 ma/cm2 * 1.96e-5 cm2 * 1e6 na/ma
-
-print(peaks)
-
-print(get_propts())
 
 
+    start = int( (cfg.delay[0]  - 3) / cfg.recordStep )
+
+    print("RMP: %f" %(anl.data['vs'][start]))
+
+    print(anl.get_propts())
