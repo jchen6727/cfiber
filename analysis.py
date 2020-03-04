@@ -1,10 +1,13 @@
 import json
-
 import numpy as np
-
 import matplotlib.pyplot as plt
-
 from batch_cfg import cfg
+
+#usage:
+#from analysis import analysis
+#an = analysis(<<input file>>, <<output string>>)
+#an.set_window(<<start time (ms)>>, <<stop time (ms)>>)
+#an.plot_traces(<<title>>, <<y unit>>, <<variable string>>)
 
 class analysis():
     def __init__(self, filename, output = "analysis/"):
@@ -52,11 +55,18 @@ class analysis():
 
     def get_vel( self, start = 0, stop = cfg.duration ):
         self.set_window(start, stop)
-        v1   = self.get_spike('v1')
-        v9   = self.get_spike('v9')
-        dx   = cfg.L * 0.8
-        dt   = v9['time'] - v1['time']
-        vel  = dx * 1E-6 / dt * 1E3
+        vas  = [va for va in self.data if va[-3:] == 'cm)']
+        vxmin = min(vas)
+        vxmax = max(vas)
+        print(vxmin)
+        print(vxmax)
+        vs   = self.get_spike(vxmin)
+        vf   = self.get_spike(vxmax)
+        # convert to meters
+        dx   = ( float(vxmax[2:-3]) - float(vxmin[2:-3]) ) / 100
+        # convert to seconds
+        dt   = ( vf['time'] - vs['time'] ) / 1000
+        vel  = dx / dt
         return vel
 
     def plot_soma( self, start = 0, stop = cfg.duration ):
@@ -92,7 +102,8 @@ class analysis():
             ax.grid(which='major', linestyle='-')
             ax.grid(which='minor', linestyle=':')
 
-        plt.savefig( self.output + "soma.png")
+        plt.margins(x = 0, y = 0.0125)
+        plt.savefig( self.output + "soma.png", bbox_inches = 'tight', pad_inches = 0.075)
 
         plt.cla()
         plt.clf()
@@ -103,9 +114,6 @@ class analysis():
 
     def get_propts( self ):
         propts = {}
-        dx = cfg.L * 0.8 # in microns
-        dt = self.data['t'][np.argmax(self.data['v9'])] - self.data['t'][np.argmax(self.data['v1'])] # in ms
-        propts['peri_vel'] = dx/dt * 1e-3 # correction to meters/second
         propts['soma_pkv'] = max(self.data['vs'])
         propts['soma_pkt'] = self.data['t'][np.argmax(self.data['vs'])]
         propts['soma_ahp'] = min(self.data['vs'])
@@ -122,7 +130,12 @@ class analysis():
             ax.plot(xdatas[i], ydatas[i], label = label)
 
         ax.legend()
-        plt.savefig( self.output + title + ".png")
+        ax.minorticks_on()
+        ax.grid(which='major', linestyle='-')
+        ax.grid(which='minor', linestyle=':')
+
+        plt.margins(x = 0, y = 0.0125)
+        plt.savefig( self.output + title + ".png", bbox_inches = 'tight', pad_inches = 0.075)
 
         plt.cla()
         plt.clf()
@@ -149,18 +162,15 @@ class analysis():
 
 
 if __name__ == "__main__":
-    anl = analysis("data/sim1.json", "data/")
-    print("velocity is %f m/s" %(anl.get_vel()) )
-    anl.set_window(275, 375)
-    anl.plot_traces( "voltage", "mv", "v")
-    anl.plot_soma(275, 375)
-    
+    from cfg import cfg
+    an = analysis("data/sim1.json", "adata/")
+    print("velocity is %f m/s" %(an.get_vel()) )
+    an.set_window(cfg.delay[1]-5, cfg.delay[-1]+25)
+    an.plot_traces( "voltage", "mv", "v")
+    an.plot_soma(cfg.delay[1]-5, cfg.delay[-1]+25)
 
+    start = int( (cfg.delay[1]  - 3) / cfg.recordStep )
 
+    print("RMP: %f" %(an.data['vs'][start]))
 
-
-    start = int( (cfg.delay[0]  - 3) / cfg.recordStep )
-
-    print("RMP: %f" %(anl.data['vs'][start]))
-
-    print(anl.get_propts())
+    print(an.get_propts())

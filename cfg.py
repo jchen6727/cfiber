@@ -47,7 +47,7 @@ cfg.ek  =  -70#-81.31
 cfg.rmut = 0.0
 
 cfg.gm  = 0.0001
-cfg.delay = [ 300 ]#, 250, 300] #, 400, 500, 600 ] #, 200, 300, 400, 500 ]#, 100, 200, 300, 400, 500]#s, 200, 300, 400, 500, 600, 700, 800, 900  ]
+cfg.delay = [0, 300]#, 250, 300] #, 400, 500, 600 ] #, 200, 300, 400, 500 ]#, 100, 200, 300, 400, 500]#s, 200, 300, 400, 500, 600, 700, 800, 900  ]
 
 cfg.cvode_active = True
 #cfg.dt = 0.01
@@ -59,34 +59,33 @@ cfg.recordStep = 0.0125
 cfg.nav17 = 'nav17'
 cfg.nav18 = 'nav18'
 cfg.nav19 = 'na19a'
-cfg.recordTraces = {'v1' : {'sec': 'axnperi', 'loc': 0.1, 'var': 'v'},
-                    'v3' : {'sec': 'axnperi', 'loc': 0.3, 'var': 'v'},
-                    'v5' : {'sec': 'axnperi', 'loc': 0.5, 'var': 'v'},
-                    'v7' : {'sec': 'axnperi', 'loc': 0.7, 'var': 'v'},
-                    'v9' : {'sec': 'axnperi', 'loc': 0.9, 'var': 'v'},
-                    'vs' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'v'},
-                    'vc' : {'sec': 'axncntr', 'loc': 0.5, 'var': 'v'},
-                    'in7' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ina_nav17'},
-                    'in8' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ina_nav18'},
-                    'in9' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ina_na19a'},
-#                    'ik1' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ik_kv1'   },
-                    'ik2' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ik_kv2'   },
-                    'ik3' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ik_kv3'   },
-#                    'ik4' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ik_kv4'   },
-                    'ik7' : {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ik_kv7'   }}
+
+#generate recordTraces for the peripheral axon, note that will be in centimeters
+for x in [ 0.1, 0.3, 0.5, 0.7, 0.9]:
+    cfg.recordTraces['v(%.2fcm)' %(x * cfg.L / 10000)] = {'sec': 'axnperi', 'loc': x, 'var': 'v'}
+
+#generate recordTraces for the soma
+for i, chan in [ ['ina7','nav17'], ['ina8','nav18'], ['ina9','na19a'] ]:
+    cfg.recordTraces[i] = {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ina_%s' %(chan)}
+
+for i, chan in [ ['ikdr','kv2'], ['ika','kv3'], ['ikm','kv7'] ]:
+    cfg.recordTraces[i] = {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ik_%s' %(chan)}
+
+cfg.recordTraces['vs'] = {'sec': 'drgsoma', 'loc': 0.5, 'var': 'v'}
+cfg.recordTraces['vc'] = {'sec': 'axncntr', 'loc': 0.5, 'var': 'v'}
 
 # Saving
 cfg.simLabel = 'sim1'
 cfg.saveFolder = 'data'
 cfg.savePickle = False
 cfg.saveJson = True
-#cfg.saveDataInclude = ['simData', 'simConfig', 'netParams']
+cfg.saveDataInclude = ['simData', 'simConfig']
 
 
 # Analysis and plotting 
 #cfg.analysis.plotTraces = {'include': ['cnrn'], 'overlay': True, 'oneFigPer': 'cell', 'saveFig': True,#'plots/n7_%.1f_n9_%.3f_k2_%.3f_k3_%.3f.png' %(cfg.nacndct[0], cfg.gna19, cfg.gk2, cfg.gk3), 
 #                           'showFig': False, 'timeRange': [cfg.delay[0], cfg.duration]}
 
-cfg.duration = cfg.delay[-1] + 100
+cfg.duration = cfg.delay[-1] + 25
 cfg.analysis.plotTraces = {'include': ['cnrn'], 'overlay': True, 'oneFigPer': 'cell', 'saveFig': True,#'plots/n7_%.1f_n9_%.3f_k2_%.3f_k3_%.3f.png' %(cfg.nacndct[0], cfg.gna19, cfg.gk2, cfg.gk3), 
-                           'showFig': False, 'timeRange': [0, cfg.duration]}
+                           'showFig': False, 'timeRange': [cfg.delay[1] - 5, cfg.duration]}
