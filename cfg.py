@@ -18,8 +18,8 @@ cfg.vrest = cfg.hParams['v_init']
 #cfg.cndct = [ 1.5 , 0.5 ]
 
 #length of the peripheral axon
-cfg.L     = 10000#100000
-cfg.nseg  = 1001
+cfg.L     = 1000#100000
+cfg.nseg  = 101
 #testing dlambda
 
 cfg.gna17 = 0.8 * 0.3
