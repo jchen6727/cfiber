@@ -10,7 +10,7 @@ cfg = specs.SimConfig()
 
 #cfg.gna17 = 0.01066
 #cfg.gna18 = 0.02427
-cfg.hParams = {'celsius': 37, 'v_init': -50}
+cfg.hParams = {'celsius': 37, 'v_init': -57}
 cfg.vrest = cfg.hParams['v_init']
 
 #cfg.gna17 = 0.01
@@ -25,7 +25,7 @@ cfg.nseg  = 101
 cfg.gna17 = 0.8 * 0.3
 cfg.gna18 = 0.9 * 0.3   
 cfg.gna19 = 0.06 * 0.5
-cfg.nacndct = [ 1 , 1 , 1 ]
+cfg.nacndct = [ 10 , 1 , 1 ]
 
 cfg.gk2 = 0.06    # KDR channel
 cfg.gk3 = 0.06    # A-type channel
@@ -34,7 +34,8 @@ cfg.gk7 = 0.01 # IM channel 0.02 is the value for XE9 blockade.
 
 cfg.kcndct  = [ 0, 1 , 1 , 0, 1]
 
-cfg.navq = { 'nav17': 1.0, 'nav18': 1, 'na19a': 5}
+cfg.navq = { 'nav17': 1, 'nav18': 1, 'na19a': 5}
+
 cfg.kvq = { 'kv2': 1.5 , 'kv3': 3.0 }
 
 cfg.gca = 0
@@ -47,7 +48,8 @@ cfg.ek  =  -70#-81.31
 cfg.rmut = 0.0
 
 cfg.gm  = 0.0001
-cfg.delay = [0, 300]#, 250, 300] #, 400, 500, 600 ] #, 200, 300, 400, 500 ]#, 100, 200, 300, 400, 500]#s, 200, 300, 400, 500, 600, 700, 800, 900  ]
+#cfg.delay = [0, 300]#, 250, 300] #, 400, 500, 600 ] #, 200, 300, 400, 500 ]#, 100, 200, 300, 400, 500]#s, 200, 300, 400, 500, 600, 700, 800, 900  ]
+cfg.delay = [300]
 
 cfg.cvode_active = True
 #cfg.dt = 0.01
@@ -65,7 +67,7 @@ for x in [ 0.1, 0.3, 0.5, 0.7, 0.9]:
     cfg.recordTraces['v(%.2fcm)' %(x * cfg.L / 10000)] = {'sec': 'axnperi', 'loc': x, 'var': 'v'}
 
 #generate recordTraces for the soma
-for i, chan in [ ['ina7','nav17'], ['ina8','nav18'], ['ina9','na19a'] ]:
+for i, chan in [ ['ina1.7','nav17'], ['ina1.8','nav18'], ['ina1.9','na19a'] ]:
     cfg.recordTraces[i] = {'sec': 'drgsoma', 'loc': 0.5, 'var': 'ina_%s' %(chan)}
 
 for i, chan in [ ['ikdr','kv2'], ['ika','kv3'], ['ikm','kv7'] ]:
@@ -86,6 +88,6 @@ cfg.saveDataInclude = ['simData', 'simConfig']
 #cfg.analysis.plotTraces = {'include': ['cnrn'], 'overlay': True, 'oneFigPer': 'cell', 'saveFig': True,#'plots/n7_%.1f_n9_%.3f_k2_%.3f_k3_%.3f.png' %(cfg.nacndct[0], cfg.gna19, cfg.gk2, cfg.gk3), 
 #                           'showFig': False, 'timeRange': [cfg.delay[0], cfg.duration]}
 
-cfg.duration = cfg.delay[-1] + 25
+cfg.duration = cfg.delay[-1] + 100
 cfg.analysis.plotTraces = {'include': ['cnrn'], 'overlay': True, 'oneFigPer': 'cell', 'saveFig': True,#'plots/n7_%.1f_n9_%.3f_k2_%.3f_k3_%.3f.png' %(cfg.nacndct[0], cfg.gna19, cfg.gk2, cfg.gk3), 
-                           'showFig': False, 'timeRange': [cfg.delay[1] - 5, cfg.duration]}
+                           'showFig': False, 'timeRange': [0, cfg.duration]}

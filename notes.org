@@ -1,0 +1,202 @@
+parametrization
+-> q10 is 2.5 for NaV and KV channels
+-> KV set to 3.8 for KV
+-> Kv3 narrows the AP
+-> Peripheral fiber conduction velocity should be somewhere 0.5 - 1.5 m/s
+
+-> q10 is 2.5, KV is 3.5
+
+looking through the parameters again I have added q10s for each channel
+17, 18 and 19 are paired for sanity's sake
+but I have changed the q10 for each of the potassium channels, 
+anywhere between 1 and 5 should be good
+and now I can get very good APs
+
+
+cfg.gna17 = 0.8 * 0.3
+cfg.gna18 = 0.9 * 0.3   
+cfg.gna19 = 0.06 * 0.5
+cfg.nacndct = [ 1 , 1 , 1 ]
+
+cfg.gk2 = 0.06    # KDR channel
+cfg.gk3 = 0.06    # A-type channel
+
+cfg.gk7 = 0.01 # IM channel 0.02 is the value for XE9 blockade.
+
+cfg.kcndct  = [ 0, 1 , 1 , 0, 1]
+
+cfg.naq = 1.0
+cfg.kvq = { 'kv2': 1.5 , 'kv3': 3.0 }
+
+revisions for sodium channel q10s, can now customize them individually
+
+testing L and nseg changes to the axon.
+minimum nseg for L = 100000 microns (0.1 meter)
+
+testing out some new analysis code on batch file simulations:
+
+In [3]: anl1 = analysis("batch_results/rmut_6_5.json")                                               
+In [4]: anl1.set_window(300, 550)                                                                    
+In [5]: anl1.plot_traces( "voltage", "mv", "v" )                                                     
+In [6]: 1000 / 120                                                                                   
+Out[6]: 8.333333333333334
+In [7]: anl1.get_vel(300, 400)                                                                       
+Out[7]: 0.1350210970465363
+In [8]: anl1.get_vel(400, 500)                                                                       
+Out[8]: 0.12675777381671263
+In [9]: anl1.set_window(300,400)                                                                     
+In [10]: vs = anl1.get_spike('v5')                                                                   
+In [11]: vs['peak']                                                                                  
+Out[11]: 12.970815453745619
+In [12]: anl1.set_window(400,500)                                                                    
+In [13]: vs = anl1.get_spike('v5')                                                                   
+In [14]: vs['peak']                                                                                  
+Out[14]: 11.622534700779624
+In [15]: anl1 = analysis("batch_results/cndct_6_5.json")                                             
+In [16]: anl1.set_window(300, 550)                                                                   
+In [17]: anl1.plot_traces( "voltage", "mv", "v" )                                                    
+In [18]: anl1.get_vel(300, 400)                                                                      
+Out[18]: 0.17071218991746656
+In [19]: vs = anl1.get_spike('v5')                                                                   
+In [20]: vs['peak']                                                                                  
+Out[20]: 28.15068307038379
+In [21]: anl1.set_window(400, 500)                                                                   
+In [22]: anl1.get_vel(400,500)                                                                       
+Out[22]: 0.16418676244242741
+In [23]: vs = anl1.get_spike('v5')                                                                   
+In [24]: vs['peak']                                                                                  
+Out[24]: 27.14680722981675
+
+plot so that both traces are superimposed over a fixed voltage point (good for comparing APs)
+In [96]: ac.set_window(355,385)
+In [97]: am.set_window(370,410)                                                 
+In [98]: ac.plot_traces( "vcndct", "mv", "v")                                   
+In [99]: ac.plot_traces( "vcndct", "mv", "vc")                                  
+In [100]: am.plot_traces( "verev", "mv", "vc")                                  
+In [101]: [int(x*10) for x in ac.ydatas[0]].index(-300)                         
+Out[101]: 492
+In [102]: [int(x*10) for x in am.ydatas[0]].index(-300)                         
+Out[102]: 679
+In [104]: mdata = am.ydatas[0][(679-6*80):(679+14*80)]                          
+In [105]: cdata = ac.ydatas[0][(492-6*80):(492+14*80)]                          
+In [106]: len(cdata)                                                            
+Out[106]: 1600
+In [107]: xdatas = [[x * 0.0125 for x in range(1600)]] * 2                        
+In [108]: ydatas = [mdata, cdata]                                               
+In [109]: labels = ['merev', 'cndct']                                           
+In [110]: ac.plot_data("AP comparison", "time (ms)", "voltage (mv)", labels, xdatas, ydatas)
+
+use np.argmin / np.argmax to plot relative to peak of action potential or trace of AHP.
+In [127]: import numpy as np                                                    
+In [128]: np.argmin(am.ydatas[0])                                               
+Out[128]: 1341
+In [129]: np.argmin(ac.ydatas[0])                                               
+Out[129]: 899
+In [130]: mdata = am.ydatas[0][(1341-5*80):(1341+25*80)]                        
+In [131]: cdata = ac.ydatas[0][(899-5*80):(899+25*80)]                          
+In [132]: len(cdata) == len(mdata)                                              
+Out[132]: True
+In [133]: len(cdata)                                                            
+Out[133]: 2400
+In [134]: xdatas = [[x * 0.0125 for x in range(2400)]] * 2                      
+In [135]: ac.plot_data("AHP comparison", "time (ms)", "voltage (mv)", labels, xdatas, [mdata, cdata])
+
+realized that numpy can just use numpy.where() function to get indexes.
+
+Pretty big discussion on Q10. Need to know that people are very bad at getting temperature dependency right:
+
+9:31 AM
+Kazutaka thanks! so my understanding is that…
+the original experiment (2006) was done under room temperature, and the ichanWT2005 might be validated in this temperature condition
+your experiment was done with same temperature condition, so your simulation worked as well
+original equation would work when we simulate under the room temperature although it would not be possible to work under other temperature
+dose this make sense to you?  at present, my simulation was under 37C.. (edited) 
+11:29 AM
+billl the 6.3 is just left over in squids -- it has mostly historical meaning; the 1st assumption about mammalian channels (incorrect+the idea of individual channels didn't arrive for 30 years) was that they would be same as squid but just funciton at a higher temperature; hence a bunch of adhoc changes made over decades including the standard Q10 of 3
+3:32 PM
+jchen.6727 Ok:
+I agree, if it isn't broke, don't fix it.
+However it is troubling conceptually. I have looked into the model and the original paper and would like to point a couple things out.
+Paper -- 22 deg celsius, Model -- runs at 6.3 degrees celsius but not 22 degrees celsius.
+look at a tau eqn comparison between the two:
+Original kinetics paper:
+stau = 1000 x 140.4 x exp(-0.5 x ((V + 71.3)/30.9)^2)
+With no temperature dependencies
+Modeldb
+:"s" sodium slow inactivation system
+sinf = 1/(1+exp((v+46.0)/6.6))						
+stau = 1000*(140.4*exp(-0.5*((v+71.3)/30.9)^2))   	
+i.e., tau equations are the same.
+now, the modeldb version adds a temperature dependency.
+Here's the temperature dependency
+q10 = 3^((celsius - 6.3)/10)
+....
+tinc = -dt * q10
+sexp = 1 - exp(tinc/stau)
+So how do they get the same kinetic data when they'll clearly be getting something different if they run at RT as in the original model?
+Well, they don't run the model at RT in the modelDB. They run it at 6.3 degrees celsius.
+Also speculate that they didn't want temperature dependency at all though they coded for it, as they have this line in their mod file:
+celsius = 6.3 (degC)
+though NEURON will ignore that line. (edited) 
+3:32 PM
+edited--gotta get used to hitting shift+enter for longer posts (edited) 
+3:48 PM
+jchen.6727 And that also means:
+"original equation would work when we simulate under the room temperature although it would not be possible to work under other temperature
+dose this make sense to you?  at present, my simulation was under 37C.. (edited)" -- Kazutaka
+if we use the original model, don't sim at room temperature either, would have to sim the ichan2005WT/ ina2005 chan at 6.3 degrees celsius to match the kinetic data of the original experiment or get rid of that Q10 equation in the first place.
+3:57 PM
+billl aren't we obsessing a bit much on this ?? -- leave all as is? :slightly_smiling_face:
+4:04 PM
+jchen.6727 whatever Kazutaka's satisfied with is fine, since he's the one who's working on that part atm.
+but I think what I posted helps answer his questions 1 and 3 in a way that accounts for more of what we know--though what we know can be easily argued to be both reductive and incorrect . It might not help in a way that makes the model look better in which case he is free to ignore it. (edited) 
+4:08 PM
+but the bigger thing is to not just look at someone else's neuron code and assume it does what it says it does.
+I'm very convinced now that the original channel wasn't intended to handle temperature dependency at all (modelling it at 22 degrees celsius will give very different taus than original data at 22 degrees celsius) though it impies that it does in there. (edited) 
+
+Cortical modeling meeting
+Finished documentation on where we are at the moment -- description of nociceptive neuron model, figs & references
+Addn. meeting
+
+Funny stuff with mRNA analysis for NaV1.5
+Different primers?
+
+Downregulation of adult and neonatal NaV1.5 in the dorsal root ganglia and axon of peripheral sensory neurons of rats with spared nerve injury
+NaV1.5 (f) GACCACCCAGCCCAGCAAGG     (r) TCCCCAGGCCCCTCCTGTTG;
+NaV1.5 (f) TTCTGCCTGCATGCATTCACCTT  (r)-GCAGAAGACAGTGAGGACCA;
+Single-cell analysis of sodium channel expression in dorsal root ganglion neurons
+Nav1.5 (f) AGATGACCAGAGCCCTGAGA     (r) GCGAAGGTCTGGAAGTTGAA;
+
+so what is going on?
+
+Probably throw out NaV1.5 as point of contention for now, NaV1.6 and other sodium channels may be more relevant.
+
+
+
+Josh - whether to focus on 1.7
+Is there some kind of AIS somewhere, can we take densities to be uniform
+
+Prior published human from Yale collaborator: human 1.8 NaV models, but missing slow and ultraslow kinetics
+
+Q10, and temperature adjustments were used to fit models as kinetic data was at room temperature while initial rat AP taken at 37 degrees. Can we get rid of this
+
+Variability of DRG neurons. These neurons will have different channel densities and waveform morphologies. 
+If we want to focus on the nociceptive fibers should use some identification.
+
+NaV1.7 is human, NaV1.8 is rat, NaV1.9 is human, like to get all to human data to fit a human model
+
+Erev mutation applied to NaV1.8. Show plot
+
+
+cfiber signalling to dorsal horn, occurs through diffusion of neuropeptides through the dorsal horn.
+
+
+Personal notes.
+Soma AP --> larger AP at the soma is problematic, should see why this is the case.
+
+Josh, Sulayman, Ted and Greg.
+
+cfiber signalling to dorsal horn, occurs through diffusion of neuropeptides through the dorsal horn.
+
+Abstract 
+

@@ -1,3 +1,8 @@
+"""
+old analysis file to work with my old batch files
+"""
+
+
 import json
 import numpy as np
 import matplotlib.pyplot as plt
@@ -5,9 +10,9 @@ from batch_cfg import cfg
 
 #usage:
 #from analysis import analysis
-#a0 = analysis(<<input file>>, <<output string>>)
-#a0.set_window(<<start time (ms)>>, <<stop time (ms)>>)
-#a0.plot_traces(<<title>>, <<y unit>>, <<variable string>>)
+#an = analysis(<<input file>>, <<output string>>)
+#an.set_window(<<start time (ms)>>, <<stop time (ms)>>)
+#an.plot_traces(<<title>>, <<y unit>>, <<variable string>>)
 
 class analysis():
     def __init__(self, filename, output = "analysis/"):
@@ -24,8 +29,8 @@ class analysis():
 
         data['t'] = jdata['simData']['t']
     
-        for var in cfg.recordTraces.keys():
-            data[var] = np.array(jdata['simData'][var]['cell_0'])
+        for var in ['ik2', 'ik3', 'ik7', 'in7', 'in8', 'in9', 'v1', 'v3', 'v5', 'v7', 'v9', 'vc', 'vs']:
+            data[var] = jdata['simData'][var]['cell_0']
 
     ### get all the data -- put in data{} ###
         self.data = data
@@ -55,34 +60,27 @@ class analysis():
 
     def get_vel( self, start = 0, stop = cfg.duration ):
         self.set_window(start, stop)
-        vas  = [va for va in self.data if va[-3:] == 'cm)']
-        vxmin = min(vas)
-        vxmax = max(vas)
-        print(vxmin)
-        print(vxmax)
-        vs   = self.get_spike(vxmin)
-        vf   = self.get_spike(vxmax)
+        vs   = self.get_spike('v1')
+        vf   = self.get_spike('v9')
         # convert to meters
-        dx   = ( float(vxmax[2:-3]) - float(vxmin[2:-3]) ) / 100
+        dx   = 10000 * 0.8 * 1e-6
         # convert to seconds
         dt   = ( vf['time'] - vs['time'] ) / 1000
-        if dt == 0:
-            return False
         vel  = dx / dt
         return vel
 
-    def plot_soma( self, start = 0, stop = cfg.duration, pre = -3, post = 12 ):
+    def plot_soma( self, start = 0, stop = cfg.duration ):
         self.set_window(start, stop)
         vs   = self.get_spike('vs')
-        sstart = vs['time'] + pre
-        sstop  = vs['time'] + post
+        sstart = vs['time'] - 3
+        sstop  = vs['time'] + 17
         self.set_window(sstart, sstop)
 
         fig, axs = plt.subplots(2, 1, figsize=(12,9), sharex=True)
 
         ax0 = axs[0]
         ax1 = axs[1]
-        fig.suptitle( "traces at soma" )
+        fig.suptitle( "soma" )
         #plot for soma specifically with subplots for voltage and current
 
         self.get_traces("i")
@@ -162,20 +160,16 @@ class analysis():
         
         return bounds
 
-    def find_val(self, trace = 'vc', value = -30, precision = 10):
-        return np.where(int(self.data[trace] * precision) == (value*precision) )[0]
-
-
 
 if __name__ == "__main__":
     from cfg import cfg
     an = analysis("data/sim1.json", "adata/")
     print("velocity is %f m/s" %(an.get_vel()) )
-    an.set_window(cfg.delay[-1]-5, cfg.delay[-1]+25)
+    an.set_window(cfg.delay[1]-5, cfg.delay[-1]+25)
     an.plot_traces( "voltage", "mv", "v")
-    an.plot_soma(cfg.delay[-1]-5, cfg.delay[-1]+25, -3, 7)
+    an.plot_soma(cfg.delay[1]-5, cfg.delay[-1]+25)
 
-    start = int( (cfg.delay[-1]  - 3) / cfg.recordStep )
+    start = int( (cfg.delay[1]  - 3) / cfg.recordStep )
 
     print("RMP: %f" %(an.data['vs'][start]))
 

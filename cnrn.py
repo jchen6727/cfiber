@@ -34,7 +34,8 @@ class cnrn():
                  gm   = 1/10000,
                  rmut = 0.0,
                  L    = 100,
-                 nseg = 101):
+                 nseg = 101,
+                 connect = 'all'):#set to False and isolate the DRG.
         self.regions = {'all': [], 'axn': [], 'drg': [], 'soma': []}
         
         self.vrest = vrest
@@ -59,6 +60,8 @@ class cnrn():
         self.L = L
         self.nseg = nseg
 
+        self.connect = connect
+
         self.set_morphology()
         self.insert_conductances()
         
@@ -66,6 +69,7 @@ class cnrn():
             self.insert_mut()
 
         self.connect_secs()
+
         self.initialize_values()
         
     def add_comp(self, sec, *regions):
@@ -146,14 +150,36 @@ class cnrn():
             sec.emut_nav18 = self.emut
 
     def connect_secs(self):
-        self.drgperi.connect(self.axnperi)
-        self.drgstem.connect(self.drgperi)
-        self.drgsoma.connect(self.drgstem)
-        self.drgcntr.connect(self.drgperi)
-        self.axncntr.connect(self.drgcntr)
+#-----------------------------------------------------------#
+#             What the morphology looks like...             #
+#                            1                              #
+#                         drgsoma                           #
+#                            0                              #
+#                            1                              #
+#                         drgstem                           #
+#                            0                              #
+#        0anxperi1-0drgperi1-^-0drgscntr11-0axncntr1        #
+#-----------------------------------------------------------#
+        if self.connect == 'soma':
+            print("isolating soma")
+            return
+        if self.connect == 'all':
+            print("connecting all components")
+            self.drgperi.connect(self.axnperi)#axnperi 1 to drgperi 0
+            self.axncntr.connect(self.drgcntr)#drgcntr 1 to axncntr 0
+            self.drgstem.connect(self.drgperi)#drgperi 1 to drgstem 0
+            self.drgsoma.connect(self.drgstem)#drgstem 1 to drgsoma 0
+            self.drgcntr.connect(self.drgperi)#drgperi 1 to drgcntr 0
+            return
+        if self.connect == 'drg':
+            print("isolating DRG")
+            self.drgstem.connect(self.drgperi)#drgperi 1 to drgstem 0
+            self.drgsoma.connect(self.drgstem)#drgstem 1 to drgsoma 0
+            self.drgcntr.connect(self.drgperi)#drgperi 1 to drgcntr 0
+        else:
+            print("isolating soma")
 
-    def initialize_values(self):
-        
+    def initialize_values(self):        
         for i, sec in enumerate(self.regions['all']):
             h.finitialize(self.vrest)
             h.fcurrent()
